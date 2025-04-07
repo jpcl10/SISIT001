@@ -1,0 +1,341 @@
+@import url('./variables.css');
+
+/* 
+ * SISTEMA UBS - Estilos de Tabelas
+ * Estilos específicos para tabelas e visualização de dados
+ */
+ 
+/* Tabelas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+th {
+  background-color: var(--cor-fundo-escuro);
+  font-weight: 600;
+  color: var(--cor-primaria);
+}
+
+tbody tr:hover {
+  background-color: rgba(52, 152, 219, 0.05);
+}
+
+/* Status de solicitações */
+.status-pendente {
+  color: var(--cor-aviso);
+  font-weight: 600;
+}
+
+.status-aprovado {
+  color: var(--cor-sucesso);
+  font-weight: 600;
+}
+
+.status-rejeitado {
+  color: var(--cor-erro);
+  font-weight: 600;
+}
+
+/* Cards de lista */
+.lista-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--espacamento-medio);
+}
+
+.card-item {
+  background-color: var(--cor-fundo-claro);
+  border-radius: var(--borda-arredondada);
+  box-shadow: var(--sombra-padrao);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: var(--espacamento-medio);
+  background-color: var(--cor-fundo-escuro);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-titulo {
+  font-weight: 600;
+  font-size: var(--fonte-tamanho-padrao);
+}
+
+.card-data {
+  font-size: var(--fonte-tamanho-pequeno);
+  color: var(--cor-texto-claro);
+}
+
+.card-conteudo {
+  padding: var(--espacamento-medio);
+}
+
+.card-acoes {
+  padding: var(--espacamento-pequeno) var(--espacamento-medio);
+  border-top: 1px solid var(--cor-borda);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--espacamento-pequeno);
+}
+
+/* Filtros para tabelas */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: var(--espacamento-medio);
+}
+
+.filtros input, .filtros select {
+  max-width: 200px;
+}
+
+/* Tabela responsiva */
+.tabela-responsiva {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .lista-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .filtros {
+    flex-direction: column;
+  }
+  
+  .filtros input, .filtros select {
+    max-width: 100%;
+  }
+}
+
+/**
+ * SISTEMA UBS LOCAL - Estilos de Tabelas
+ * Contém estilos específicos para tabelas e seus componentes
+ */
+
+/* Container da tabela */
+.tabela-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: var(--espacamento-grande);
+  border-radius: var(--borda-arredondada);
+  background-color: var(--cor-fundo-claro);
+}
+
+/* Estilo base da tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: var(--fonte-tamanho-padrao);
+  background-color: var(--cor-fundo-claro);
+}
+
+/* Cabeçalho da tabela */
+thead {
+  background-color: var(--cor-fundo-escuro);
+  border-bottom: 2px solid var(--cor-borda);
+}
+
+thead th {
+  padding: 1rem;
+  font-weight: 600;
+  color: var(--cor-primaria);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  background-color: var(--cor-fundo-escuro);
+  z-index: 10;
+}
+
+/* Células da tabela */
+tbody td {
+  padding: 0.8rem 1rem;
+  border-bottom: var(--borda-padrao);
+  vertical-align: middle;
+}
+
+/* Linhas da tabela com hover */
+tbody tr:hover {
+  background-color: rgba(52, 152, 219, 0.05);
+}
+
+/* Última linha sem borda inferior */
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Colunas de ação */
+td.acoes {
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* Tabela com linhas zebradas */
+table.zebrada tbody tr:nth-child(even) {
+  background-color: var(--cor-fundo-escuro);
+}
+
+table.zebrada tbody tr:hover {
+  background-color: rgba(52, 152, 219, 0.1);
+}
+
+/* Tabela condensada */
+table.condensada thead th {
+  padding: 0.75rem;
+}
+
+table.condensada tbody td {
+  padding: 0.6rem 0.75rem;
+}
+
+/* Células de cabeçalho ordenáveis */
+th.ordenavel {
+  cursor: pointer;
+  user-select: none;
+}
+
+th.ordenavel::after {
+  content: '⯅⯆';
+  font-size: 0.6rem;
+  margin-left: 0.5rem;
+  opacity: 0.5;
+}
+
+th.ordenavel.asc::after {
+  content: '⯅';
+  opacity: 1;
+}
+
+th.ordenavel.desc::after {
+  content: '⯆';
+  opacity: 1;
+}
+
+/* Células com alinhamento específico */
+td.align-center, th.align-center {
+  text-align: center;
+}
+
+td.align-right, th.align-right {
+  text-align: right;
+}
+
+/* Células com formatação numérica */
+td.numero {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* Paginação */
+.paginacao {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--cor-fundo-escuro);
+  border-top: var(--borda-padrao);
+}
+
+.paginacao-info {
+  color: var(--cor-texto-claro);
+  font-size: var(--fonte-tamanho-pequeno);
+}
+
+.paginacao-controles {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.paginacao-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--borda-arredondada-pequena);
+  border: var(--borda-padrao);
+  background-color: white;
+  cursor: pointer;
+  font-weight: 500;
+  transition: var(--transicao-padrao);
+}
+
+.paginacao-btn:hover {
+  background-color: var(--cor-destaque);
+  color: white;
+  border-color: var(--cor-destaque);
+}
+
+.paginacao-btn.ativa {
+  background-color: var(--cor-destaque);
+  color: white;
+  border-color: var(--cor-destaque);
+}
+
+.paginacao-btn.desabilitada {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Responsividade para tabelas em dispositivos móveis */
+@media (max-width: 768px) {
+  .tabela-responsiva {
+    display: block;
+  }
+  
+  .tabela-responsiva thead {
+    display: none;
+  }
+  
+  .tabela-responsiva tbody,
+  .tabela-responsiva tr,
+  .tabela-responsiva td {
+    display: block;
+    width: 100%;
+  }
+  
+  .tabela-responsiva tr {
+    margin-bottom: 1rem;
+    border: var(--borda-padrao);
+    border-radius: var(--borda-arredondada-pequena);
+  }
+  
+  .tabela-responsiva td {
+    text-align: right;
+    position: relative;
+    padding-left: 50%;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  
+  .tabela-responsiva td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 1rem;
+    font-weight: 600;
+    text-align: left;
+  }
+  
+  .tabela-responsiva td:last-child {
+    border-bottom: 0;
+  }
+} 

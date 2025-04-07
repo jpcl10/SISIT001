@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Integrado de Regulação UBS</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style-central.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .acoes {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .btn-acao {
+      padding: 0.3rem 0.8rem;
+      font-size: 0.85rem;
+      border-radius: var(--borda-arredondada);
+      cursor: pointer;
+      border: 1px solid var(--cor-borda);
+      background-color: #fff;
+    }
+    
+    .btn-acao.visualizar {
+      color: var(--cor-destaque);
+      border-color: var(--cor-destaque);
+    }
+    
+    .btn-acao.editar {
+      color: var(--cor-aviso);
+      border-color: var(--cor-aviso);
+    }
+    
+    .btn-acao.cancelar {
+      color: var(--cor-erro);
+      border-color: var(--cor-erro);
+    }
+    
+    .nova-solicitacao {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    
+    .status-badge.rascunho {
+      background-color: #f1f1f1;
+      color: #666;
+    }
+    
+    .status-badge.enviado {
+      background-color: #e8f4fd;
+      color: var(--cor-destaque);
+    }
+    
+    .status-badge.aprovado {
+      background-color: #e6f7ef;
+      color: var(--cor-sucesso);
+    }
+    
+    .status-badge.rejeitado {
+      background-color: #fdeeee;
+      color: var(--cor-erro);
+    }
+    
+    .vazio-mensagem {
+      text-align: center;
+      padding: 2rem;
+      color: #777;
+    }
+    
+    .dados-debug {
+      margin-top: 2rem;
+      padding: 1rem;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: var(--borda-arredondada);
+    }
+    
+    .dados-debug h3 {
+      margin-top: 0;
+      color: #555;
+    }
+    
+    .dados-debug pre {
+      background-color: #eee;
+      padding: 1rem;
+      border-radius: 4px;
+      overflow: auto;
+      font-size: 0.9rem;
+    }
+
+    #app-container {
+      min-height: 80vh;
+    }
+  </style>
+</head>
+<body>
+  <!-- Containers para componentes dinâmicos -->
+  <div id="header-container"></div>
+  
+  <main id="app-container">
+    <div class="carregando-container">
+      <div class="carregando"></div>
+    </div>
+  </main>
+  
+  <div id="footer-container"></div>
+  
+  <!-- Navegação lateral integrada -->
+  <div id="nav-container" class="lateral-nav"></div>
+  
+  <!-- Scripts -->
+  <script type="module">
+    import './scripts/main.js';
+    import apiService from './scripts/api.js';
+    import authService from './scripts/auth.js';
+    import dependenciasManager from './scripts/dependencias.js';
+    import integracaoSistema from './scripts/integracao.js';
+    import { carregarComponente } from './scripts/utils.js';
+    
+    // Função para carregar componentes específicos desta página
+    window.carregarComponentesPagina = async function() {
+      try {
+        // Carregar navegação lateral
+        await carregarComponente('#nav-container', 'includes/navigation.html', () => {
+          // Após carregamento, ajustar interface para o perfil
+          integracaoSistema.ajustarInterfaceParaPerfil();
+        });
+        
+        // Carregar dados compartilhados
+        await integracaoSistema.carregarDadosCompartilhados();
+        
+        // Renderizar dashboard integrado
+        renderizarDashboardIntegrado();
+      } catch (error) {
+        console.error('Erro ao carregar componentes da página:', error);
+      }
+    };
+    
+    // Renderizar dashboard integrado com elementos de ambos os sistemas
+    async function renderizarDashboardIntegrado() {
+      const appContainer = document.getElementById('app-container');
+      
+      // Obter perfil do usuário para customizar dashboard
+      const usuario = authService.getUsuarioAtual();
+      const perfil = usuario?.perfil || 'visitante';
+      
+      // Layout do dashboard baseado no perfil
+      const dashboardHTML = `
+        <section class="dashboard-integrado">
+          <h2>Dashboard Central - ${usuario?.nome || 'Usuário'}</h2>
+          <p class="ultima-atualizacao">Última atualização: <span id="timestamp">${new Date().toLocaleString()}</span></p>
+          
+          <!-- Métricas principais - Comum para todos perfis -->
+          <div class="dashboard-cards">
+            <div class="card-metrica total" id="card-total">
+              <h3>Total de Solicitações</h3>
+              <p class="valor-metrica" id="total-solicitacoes">--</p>
+            </div>
+            
+            <div class="card-metrica pendentes">
+              <h3>Solicitações Pendentes</h3>
+              <p class="valor-metrica" id="contador-enviado">--</p>
+            </div>
+            
+            <div class="card-metrica ${perfil === 'ubs' ? 'enviadas' : 'urgentes'}">
+              <h3>${perfil === 'ubs' ? 'Minhas Solicitações' : 'Urgências Pendentes'}</h3>
+              <p class="valor-metrica" id="${perfil === 'ubs' ? 'contador-rascunho' : 'urgencias-pendentes'}">--</p>
+            </div>
+            
+            <div class="card-metrica tempo">
+              <h3>Cotas Disponíveis</h3>
+              <p class="valor-metrica" id="cotas-disponiveis">--</p>
+            </div>
+          </div>
+          
+          <!-- Gráficos do Dashboard -->
+          <div class="dashboard-graficos">
+            <div class="grafico-container">
+              <h3>Status das Solicitações</h3>
+              <div class="grafico">
+                <canvas id="statusChart"></canvas>
+              </div>
+            </div>
+            <div class="grafico-container">
+              <h3>Solicitações por Tipo</h3>
+              <div class="grafico">
+                <canvas id="tiposChart"></canvas>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Tabelas informativas - Específicas por perfil -->
+          <div class="dashboard-tabelas">
+            <div class="tabela-container">
+              <h3>Cotas Críticas</h3>
+              <table class="tabela-cotas">
+                <thead>
+                  <tr>
+                    <th>Procedimento</th>
+                    <th>Disponível</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Preenchido dinamicamente -->
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="tabela-container">
+              <h3>${perfil === 'ubs' ? 'Minhas Solicitações Recentes' : 'Atividades Recentes'}</h3>
+              <div class="lista-atividades">
+                <!-- Preenchido dinamicamente -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- Seção específica para Central de Regulação -->
+          <div class="central-secao" style="display: ${['regulador', 'admin'].includes(perfil) ? 'block' : 'none'}">
+            <h3>Alertas do Sistema de Regulação</h3>
+            <div class="alertas-container">
+              <!-- Preenchido dinamicamente -->
+            </div>
+          </div>
+          
+          <!-- Seção específica para UBS -->
+          <div class="ubs-secao" style="display: ${['ubs', 'admin'].includes(perfil) ? 'block' : 'none'}">
+            <h3>Ações Rápidas</h3>
+            <div class="acoes-rapidas">
+              <a href="etapa1.html" class="btn-acao-rapida nova-solicitacao">
+                <span class="icone">+</span>
+                <span class="texto">Nova Solicitação</span>
+              </a>
+              <a href="#" class="btn-acao-rapida consultar">
+                <span class="icone">🔍</span>
+                <span class="texto">Consultar Solicitações</span>
+              </a>
+              <a href="#" class="btn-acao-rapida rascunhos">
+                <span class="icone">📄</span>
+                <span class="texto">Meus Rascunhos</span>
+              </a>
+            </div>
+          </div>
+        </section>
+      `;
+      
+      // Renderizar HTML
+      appContainer.innerHTML = dashboardHTML;
+      
+      // Atualizar dados na interface
+      integracaoSistema.atualizarIndicadores();
+      
+      // Inicializar gráficos
+      inicializarGraficos();
+    }
+    
+    // Inicializar gráficos do dashboard
+    function inicializarGraficos() {
+      // Gráfico de Status das Solicitações
+      const ctxStatus = document.getElementById('statusChart').getContext('2d');
+      if (ctxStatus) {
+        const statusChart = new Chart(ctxStatus, {
+          type: 'pie',
+          data: {
+            labels: ['Pendentes', 'Aprovadas', 'Negadas', 'Devolvidas'],
+            datasets: [{
+              data: [128, 187, 42, 30],
+              backgroundColor: [
+                '#ffc107', // amarelo
+                '#28a745', // verde 
+                '#dc3545', // vermelho
+                '#6c757d'  // cinza
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'right',
+              }
+            }
+          }
+        });
+      }
+      
+      // Gráfico de Solicitações por Tipo
+      const ctxTipos = document.getElementById('tiposChart').getContext('2d');
+      if (ctxTipos) {
+        const tiposChart = new Chart(ctxTipos, {
+          type: 'bar',
+          data: {
+            labels: ['Exames', 'Consultas', 'Procedimentos', 'Medicamentos', 'Internações'],
+            datasets: [{
+              label: 'Quantidade',
+              data: [145, 102, 58, 47, 35],
+              backgroundColor: 'rgba(0, 107, 166, 0.7)',
+              borderColor: 'rgba(0, 107, 166, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      }
+    }
+  </script>
+</body>
+</html> 

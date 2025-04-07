@@ -1,0 +1,213 @@
+{
+  "solicitacoes": [
+    {
+      "_id": "ressonancia_1680123456789",
+      "tipoSolicitacao": "ressonancia",
+      "dadosPaciente": {
+        "nomePaciente": "Maria Silva Santos",
+        "dataNascimento": "1975-05-15",
+        "cnsPaciente": "123456789012345",
+        "cpfPaciente": "123.456.789-00",
+        "enderecoPaciente": "Rua das Flores, 123, Centro",
+        "telefonePaciente": "(33) 99999-8888",
+        "nomeUnidade": "UBS Central",
+        "cnesUnidade": "1234567"
+      },
+      "dadosEspecificos": {
+        "regiao": "coluna_lombar",
+        "descricaoCaso": "Paciente apresenta dor lombar intensa há 3 meses, sem melhora com medicação convencional. Refere irradiação para membro inferior direito com parestesia.",
+        "cid10Principal": "M54.4",
+        "cid10Secundario": "M51.1",
+        "nomeMedico": "Dr. João Carlos Oliveira",
+        "crmMedico": "CRM-MG 12345",
+        "especialidade": "Ortopedia",
+        "dataEmissao": "2023-06-10",
+        "prioridade": "prioritaria",
+        "condicoesEspeciais": ["obesidadeMorbida"]
+      },
+      "_dataCriacao": "2023-06-10T14:30:45.789Z",
+      "_status": "enviado"
+    },
+    {
+      "_id": "mamografia_1680123456790",
+      "tipoSolicitacao": "mamografia",
+      "dadosPaciente": {
+        "nomePaciente": "Ana Carolina Ferreira",
+        "dataNascimento": "1968-08-23",
+        "cnsPaciente": "987654321098765",
+        "cpfPaciente": "987.654.321-00",
+        "enderecoPaciente": "Av. Principal, 456, Bairro Novo",
+        "telefonePaciente": "(33) 98888-7777",
+        "nomeUnidade": "UBS Jardim Esperança",
+        "cnesUnidade": "7654321"
+      },
+      "dadosEspecificos": {
+        "tipoExame": "mamografia_bilateral",
+        "descricaoCaso": "Paciente com histórico familiar de câncer de mama. Mãe falecida aos 45 anos por câncer de mama. Sem queixas atuais.",
+        "cid10Principal": "Z12.3",
+        "indicacaoClinica": "rastreamento",
+        "mamografiaAnterior": "sim",
+        "dataMamografiaAnterior": "2022-07-10",
+        "nomeMedico": "Dra. Carla Mendes",
+        "crmMedico": "CRM-MG 54321",
+        "especialidade": "Ginecologia",
+        "dataEmissao": "2023-06-12",
+        "prioridade": "eletiva"
+      },
+      "_dataCriacao": "2023-06-12T10:15:30.790Z",
+      "_status": "aprovado"
+    },
+    {
+      "_id": "lme_1680123456791",
+      "tipoSolicitacao": "lme",
+      "dadosPaciente": {
+        "nomePaciente": "José Antônio Pereira",
+        "dataNascimento": "1960-12-03",
+        "cnsPaciente": "567891234567890",
+        "cpfPaciente": "567.891.234-56",
+        "enderecoPaciente": "Rua dos Ipês, 789, Jardim das Flores",
+        "telefonePaciente": "(33) 97777-6666",
+        "nomeUnidade": "UBS Zona Rural",
+        "cnesUnidade": "3456789"
+      },
+      "dadosEspecificos": {
+        "medicamento": "Losartana Potássica 50mg",
+        "posologia": "1 comprimido a cada 12 horas",
+        "quantidadeMensal": "60 comprimidos",
+        "duracao": "12 meses",
+        "cid10Principal": "I10",
+        "cid10Secundario": "E78.5",
+        "justificativa": "Paciente hipertenso com histórico de intolerância aos inibidores da ECA. Necessita de controle medicamentoso contínuo.",
+        "nomeMedico": "Dr. Roberto Almeida",
+        "crmMedico": "CRM-MG 67890",
+        "especialidade": "Cardiologia",
+        "dataEmissao": "2023-06-15",
+        "prioridade": "eletiva"
+      },
+      "_dataCriacao": "2023-06-15T09:45:20.791Z",
+      "_status": "rascunho"
+    }
+  ],
+  "pacientes": [
+    {
+      "id": 1,
+      "nome": "Maria Silva Santos",
+      "dataNascimento": "1975-05-15",
+      "cns": "123456789012345",
+      "cpf": "123.456.789-00",
+      "endereco": "Rua das Flores, 123, Centro",
+      "telefone": "(33) 99999-8888"
+    },
+    {
+      "id": 2,
+      "nome": "Ana Carolina Ferreira",
+      "dataNascimento": "1968-08-23",
+      "cns": "987654321098765",
+      "cpf": "987.654.321-00",
+      "endereco": "Av. Principal, 456, Bairro Novo",
+      "telefone": "(33) 98888-7777"
+    },
+    {
+      "id": 3,
+      "nome": "José Antônio Pereira",
+      "dataNascimento": "1960-12-03",
+      "cns": "567891234567890",
+      "cpf": "567.891.234-56",
+      "endereco": "Rua dos Ipês, 789, Jardim das Flores",
+      "telefone": "(33) 97777-6666"
+    }
+  ],
+  "unidades": [
+    {
+      "id": 1,
+      "nome": "UBS Central",
+      "cnes": "1234567",
+      "endereco": "Praça da Matriz, 10, Centro",
+      "telefone": "(33) 3333-1111"
+    },
+    {
+      "id": 2,
+      "nome": "UBS Jardim Esperança",
+      "cnes": "7654321",
+      "endereco": "Rua das Margaridas, 500, Jardim Esperança",
+      "telefone": "(33) 3333-2222"
+    },
+    {
+      "id": 3,
+      "nome": "UBS Zona Rural",
+      "cnes": "3456789",
+      "endereco": "Estrada Municipal, Km 5, Zona Rural",
+      "telefone": "(33) 3333-3333"
+    }
+  ],
+  "profissionais": [
+    {
+      "id": 1,
+      "nome": "Dr. João Carlos Oliveira",
+      "crm": "CRM-MG 12345",
+      "especialidade": "Ortopedia",
+      "unidadeId": 1
+    },
+    {
+      "id": 2,
+      "nome": "Dra. Carla Mendes",
+      "crm": "CRM-MG 54321",
+      "especialidade": "Ginecologia",
+      "unidadeId": 2
+    },
+    {
+      "id": 3,
+      "nome": "Dr. Roberto Almeida",
+      "crm": "CRM-MG 67890",
+      "especialidade": "Cardiologia",
+      "unidadeId": 3
+    }
+  ],
+  "procedimentos": [
+    {
+      "id": "ressonancia",
+      "nome": "Ressonância Magnética",
+      "descricao": "Exame de imagem que utiliza campo magnético e ondas de radiofrequência",
+      "formularioEspecifico": "forms/ressonancia.html",
+      "regioes": [
+        "cranio", "coluna_cervical", "coluna_toracica", "coluna_lombar", 
+        "abdomen", "pelve", "membro_superior", "membro_inferior", "articulacoes"
+      ]
+    },
+    {
+      "id": "mamografia",
+      "nome": "Mamografia",
+      "descricao": "Exame radiológico para detecção precoce de lesões nas mamas",
+      "formularioEspecifico": "forms/mamografia.html",
+      "tipos": ["mamografia_bilateral", "mamografia_unilateral"]
+    },
+    {
+      "id": "lme",
+      "nome": "LME - Laudo para Medicação Especializada",
+      "descricao": "Solicitação de medicação de alto custo ou especializada",
+      "formularioEspecifico": "forms/lme.html"
+    },
+    {
+      "id": "aih",
+      "nome": "AIH - Autorização para Internação Hospitalar",
+      "descricao": "Solicitação de internação em unidade hospitalar",
+      "formularioEspecifico": "forms/aih.html"
+    },
+    {
+      "id": "ambulatorial",
+      "nome": "Procedimento Ambulatorial",
+      "descricao": "Solicitação de procedimentos realizados em ambulatório",
+      "formularioEspecifico": "forms/ambulatorial.html"
+    },
+    {
+      "id": "especialidades",
+      "nome": "Consulta de Especialidade",
+      "descricao": "Encaminhamento para atendimento com especialista",
+      "formularioEspecifico": "forms/especialidades.html",
+      "especialidades": [
+        "cardiologia", "neurologia", "ortopedia", "oftalmologia", 
+        "otorrinolaringologia", "endocrinologia", "dermatologia"
+      ]
+    }
+  ]
+} 

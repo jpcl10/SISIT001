@@ -1,0 +1,102 @@
+/**
+ * SISTEMA UBS LOCAL - Estilos de Navegação
+ * Contém estilos para o menu principal e navegação entre páginas.
+ */
+
+/* Menu principal */
+.menu-principal {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.menu-item {
+  color: var(--cor-texto);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--borda-arredondada);
+  transition: var(--transicao-padrao);
+}
+
+.menu-item:hover {
+  background-color: rgba(41, 128, 185, 0.1);
+  color: var(--cor-destaque);
+}
+
+.menu-item.ativo {
+  background-color: var(--cor-destaque);
+  color: white;
+}
+
+/* Notificações */
+.notificacao {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--borda-arredondada);
+  background-color: var(--cor-fundo-claro);
+  box-shadow: var(--sombra-elevada);
+  z-index: 1000;
+  animation: fadeInOut 4s ease-in-out;
+  max-width: 300px;
+}
+
+.notificacao.sucesso {
+  border-left: 4px solid var(--cor-sucesso);
+  color: var(--cor-sucesso);
+}
+
+.notificacao.erro {
+  border-left: 4px solid var(--cor-erro);
+  color: var(--cor-erro);
+}
+
+.notificacao.aviso {
+  border-left: 4px solid var(--cor-aviso);
+  color: var(--cor-aviso);
+}
+
+.notificacao.informacao {
+  border-left: 4px solid var(--cor-info);
+  color: var(--cor-info);
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Botões de navegação */
+.botoes-navegacao {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--cor-borda);
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .menu-principal {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .menu-item {
+    display: block;
+    padding: 0.75rem;
+    text-align: center;
+  }
+  
+  .botoes-navegacao {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .botoes-navegacao button {
+    width: 100%;
+  }
+} 

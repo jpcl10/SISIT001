@@ -1,0 +1,58 @@
+/**
+ * SISTEMA UBS LOCAL - Variáveis CSS
+ * Contém todas as variáveis usadas no sistema para garantir
+ * consistência visual e facilitar modificações futuras.
+ */
+
+:root {
+  /* Cores principais */
+  --cor-primaria: #2c3e50;
+  --cor-secundaria: #3498db;
+  --cor-destaque: #2980b9;
+  --cor-sucesso: #27ae60;
+  --cor-erro: #e74c3c;
+  --cor-aviso: #f39c12;
+  --cor-info: #3498db;
+  
+  /* Cores de fundo */
+  --cor-fundo: #f5f7fa;
+  --cor-fundo-claro: #ffffff;
+  --cor-fundo-escuro: #ecf0f1;
+  
+  /* Cores de texto */
+  --cor-texto: #2c3e50;
+  --cor-texto-claro: #7f8c8d;
+  --cor-texto-destaque: #2980b9;
+  
+  /* Cores de borda */
+  --cor-borda: #dce1e5;
+  --cor-borda-escura: #bdc3c7;
+  
+  /* Espaçamentos */
+  --espacamento-minimo: 0.25rem;
+  --espacamento-pequeno: 0.5rem;
+  --espacamento-medio: 1rem;
+  --espacamento-grande: 2rem;
+  --espacamento-extra: 3rem;
+  
+  /* Bordas */
+  --borda-padrao: 1px solid var(--cor-borda);
+  --borda-destacada: 2px solid var(--cor-destaque);
+  --borda-arredondada: 0.5rem;
+  --borda-arredondada-pequena: 0.25rem;
+  
+  /* Sombras */
+  --sombra-padrao: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --sombra-elevada: 0 4px 12px rgba(0, 0, 0, 0.15);
+  
+  /* Tipografia */
+  --fonte-principal: 'Segoe UI', Arial, sans-serif;
+  --fonte-tamanho-pequeno: 0.85rem;
+  --fonte-tamanho-padrao: 1rem;
+  --fonte-tamanho-medio: 1.2rem;
+  --fonte-tamanho-grande: 1.5rem;
+  --fonte-tamanho-titulo: 2rem;
+  
+  /* Transições */
+  --transicao-padrao: all 0.3s ease;
+} 

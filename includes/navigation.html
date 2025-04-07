@@ -1,0 +1,75 @@
+<nav class="navbar">
+  <div class="brand">
+    <img src="logo-sus.png" alt="Logo SUS" class="logo">
+    <h2>Sistema de Regulação UBS</h2>
+  </div>
+  
+  <div class="nav-links">
+    <div class="nav-group">
+      <h3>Acesso Rápido</h3>
+      <ul>
+        <li><a href="index.html" class="nav-link"><i class="icon-home"></i>Dashboard</a></li>
+        <li><a href="etapa1.html" class="nav-link"><i class="icon-plus"></i>Nova Solicitação</a></li>
+        <li><a href="#" class="nav-link" id="nav-consultar"><i class="icon-search"></i>Consultar Solicitações</a></li>
+      </ul>
+    </div>
+    
+    <div class="nav-group">
+      <h3>Interfaces do Sistema</h3>
+      <ul>
+        <li><a href="sistema-ubs.html" class="nav-link"><i class="icon-clinic"></i>UBS Local</a></li>
+        <li><a href="sistema-central-regulacao.html" class="nav-link"><i class="icon-central"></i>Central de Regulação</a></li>
+      </ul>
+    </div>
+    
+    <div class="nav-group">
+      <h3>Utilidades</h3>
+      <ul>
+        <li><a href="#" class="nav-link" id="nav-exportar"><i class="icon-download"></i>Exportar Dados</a></li>
+        <li><a href="#" class="nav-link" id="nav-config"><i class="icon-settings"></i>Configurações</a></li>
+        <li><a href="solucao.html" class="nav-link"><i class="icon-info"></i>Documentação</a></li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="user-actions">
+    <div class="user-info">
+      <span id="logged-user-name">Usuário</span>
+      <span id="logged-user-role">Perfil</span>
+    </div>
+    <button id="logout-btn" class="btn-logout">Sair</button>
+  </div>
+</nav>
+
+<script>
+  // Detectar página atual e marcar link correspondente como ativo
+  document.addEventListener('DOMContentLoaded', () => {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    navLinks.forEach(link => {
+      const linkPath = new URL(link.href, window.location.origin).pathname;
+      if (currentPath === linkPath) {
+        link.classList.add('active');
+      }
+    });
+    
+    // Configurar ações nos botões
+    document.getElementById('nav-exportar').addEventListener('click', function(e) {
+      e.preventDefault();
+      if (typeof exportarDados === 'function') {
+        exportarDados();
+      } else {
+        alert('Função de exportação não disponível nesta página');
+      }
+    });
+    
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      // Limpar dados de sessão
+      sessionStorage.clear();
+      
+      // Redirecionar para login
+      window.location.href = 'login-central-regulacao.html';
+    });
+  });
+</script> 

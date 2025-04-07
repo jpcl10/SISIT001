@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Central de Regulação</title>
+  <script src="debug-session.js"></script>
+  <style>
+    :root {
+      --cor-primaria: #006ba6;
+      --cor-secundaria: #0093d0;
+      --cor-terciaria: #74c5e8;
+      --cor-fundo: #f5f7fa;
+      --cor-texto: #333;
+      --cor-borda: #ddd;
+      --cor-erro: #dc3545;
+      --fonte-principal: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      --sombra-padrao: 0 2px 5px rgba(0, 0, 0, 0.15);
+      --borda-raio: 4px;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--fonte-principal);
+      background-color: var(--cor-fundo);
+      color: var(--cor-texto);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    .header {
+      background-color: var(--cor-primaria);
+      color: white;
+      padding: 1.5rem 0;
+      text-align: center;
+      box-shadow: var(--sombra-padrao);
+    }
+    
+    .header-content {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .logo-text {
+      font-weight: bold;
+      font-size: 1.5rem;
+      margin-right: 1rem;
+      color: white;
+      background-color: rgba(255, 255, 255, 0.2);
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+      letter-spacing: 1px;
+    }
+    
+    .logo-text span {
+      color: var(--cor-terciaria);
+    }
+    
+    .container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    
+    .login-card {
+      background-color: white;
+      box-shadow: var(--sombra-padrao);
+      border-radius: 8px;
+      width: 100%;
+      max-width: 400px;
+      padding: 2rem;
+    }
+    
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .login-title {
+      color: var(--cor-primaria);
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .login-subtitle {
+      color: #777;
+      font-size: 0.9rem;
+    }
+    
+    .login-form {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--borda-raio);
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--cor-secundaria);
+      box-shadow: 0 0 0 3px rgba(0, 147, 208, 0.2);
+    }
+    
+    .remember-me {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .remember-me input {
+      margin-right: 0.5rem;
+    }
+    
+    .btn-login {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      background-color: var(--cor-primaria);
+      color: white;
+      border: none;
+      border-radius: var(--borda-raio);
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .btn-login:hover {
+      background-color: var(--cor-secundaria);
+    }
+    
+    .login-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #777;
+      font-size: 0.9rem;
+    }
+    
+    .login-footer a {
+      color: var(--cor-primaria);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .login-footer a:hover {
+      color: var(--cor-secundaria);
+      text-decoration: underline;
+    }
+    
+    .error-message {
+      background-color: rgba(220, 53, 69, 0.1);
+      color: var(--cor-erro);
+      padding: 0.75rem;
+      border-radius: var(--borda-raio);
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+    
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.85rem;
+    }
+    
+    @media (max-width: 768px) {
+      .login-card {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <div class="logo-text">SUS<span>Digital</span></div>
+      <h1>Central de Regulação Municipal</h1>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="login-card">
+      <div class="login-header">
+        <h2 class="login-title">Acesso ao Sistema</h2>
+        <p class="login-subtitle">Entre com suas credenciais para acessar o painel</p>
+      </div>
+      
+      <div class="error-message" id="error-message">
+        Usuário ou senha incorretos. Por favor, tente novamente.
+      </div>
+      
+      <form class="login-form" id="login-form">
+        <div class="form-group">
+          <label for="username">Usuário</label>
+          <input type="text" id="username" class="form-control" placeholder="Digite seu usuário" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input type="password" id="password" class="form-control" placeholder="Digite sua senha" required>
+        </div>
+        
+        <div class="remember-me">
+          <input type="checkbox" id="remember-me">
+          <label for="remember-me">Lembrar meus dados</label>
+        </div>
+        
+        <button type="submit" class="btn-login">Entrar</button>
+      </form>
+      
+      <div class="login-footer">
+        <p><a href="#">Esqueci minha senha</a></p>
+        <p>Problemas para acessar? Entre em contato com o <a href="#">Suporte Técnico</a></p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2023 Sistema de Regulação Municipal - Secretaria Municipal de Saúde</p>
+  </footer>
+
+  <script>
+    // Ativar modo de depuração para diagnóstico de problemas
+    const debugMode = true; // Definir como false em produção
+    
+    function logDebug(msg, data) {
+      if (debugMode) {
+        if (data) {
+          console.log(`🔍 DEBUG: ${msg}`, data);
+        } else {
+          console.log(`🔍 DEBUG: ${msg}`);
+        }
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      const loginForm = document.getElementById('login-form');
+      const errorMessage = document.getElementById('error-message');
+      
+      // Adicionar informações sobre os perfis disponíveis
+      const loginFooter = document.querySelector('.login-footer');
+      const perfilInfo = document.createElement('div');
+      perfilInfo.className = 'perfis-disponiveis';
+      perfilInfo.innerHTML = `
+        <p><strong>Perfis disponíveis para teste:</strong></p>
+        <ul>
+          <li><b>Regulador:</b> usuario: <code>regulador</code> / senha: <code>senha123</code></li>
+          <li><b>Admin:</b> usuario: <code>admin</code> / senha: <code>admin123</code></li>
+          <li><b>UBS:</b> usuario: <code>ubs</code> / senha: <code>ubs123</code></li>
+          <li><b>Médico:</b> usuario: <code>medico</code> / senha: <code>medico123</code></li>
+          <li><b>Atendente:</b> usuario: <code>atendente</code> / senha: <code>atendente123</code></li>
+          <li><b>Gestor:</b> usuario: <code>gestor</code> / senha: <code>gestor123</code></li>
+        </ul>
+      `;
+      loginFooter.appendChild(perfilInfo);
+      
+      // Adicionar botão de depuração
+      if (debugMode) {
+        const debugButton = document.createElement('button');
+        debugButton.textContent = 'Depurar Sessão';
+        debugButton.style.marginTop = '1rem';
+        debugButton.style.backgroundColor = '#6c757d';
+        debugButton.style.color = 'white';
+        debugButton.style.border = 'none';
+        debugButton.style.padding = '0.5rem 1rem';
+        debugButton.style.borderRadius = '4px';
+        debugButton.style.cursor = 'pointer';
+        debugButton.onclick = function() {
+          window.location.href = 'sessao-verificador.html';
+        };
+        loginFooter.appendChild(debugButton);
+      }
+      
+      // Adicionar estilo para a seção de perfis
+      const style = document.createElement('style');
+      style.textContent = `
+        .perfis-disponiveis {
+          margin-top: 1.5rem;
+          padding: 1rem;
+          background-color: rgba(0, 107, 166, 0.1);
+          border-radius: var(--borda-raio);
+          font-size: 0.85rem;
+        }
+        .perfis-disponiveis ul {
+          padding-left: 1.5rem;
+          margin: 0.5rem 0 0;
+        }
+        .perfis-disponiveis code {
+          background: #f5f5f5;
+          padding: 0.1rem 0.3rem;
+          border-radius: 3px;
+          font-family: monospace;
+        }
+      `;
+      document.head.appendChild(style);
+      
+      loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const username = document.getElementById('username').value.trim().toLowerCase();
+        const password = document.getElementById('password').value;
+        
+        logDebug(`Tentativa de login para usuário: ${username}`);
+        
+        // Credenciais para perfis implementados no sistema
+        const usuarios = {
+          // Regulação
+          'regulador': { senha: 'senha123', perfil: 'regulador', nome: 'Dr. Carlos Santos', unidade: 'Central de Regulação' },
+          'admin': { senha: 'admin123', perfil: 'admin', nome: 'Admin Sistema', unidade: 'Central de Regulação' },
+          
+          // UBS
+          'ubs': { senha: 'ubs123', perfil: 'ubs', nome: 'Dr. Silva', unidade: 'UBS Central' },
+          'medico': { senha: 'medico123', perfil: 'medico', nome: 'Dra. Oliveira', unidade: 'UBS Norte' },
+          
+          // Outros perfis
+          'atendente': { senha: 'atendente123', perfil: 'atendente', nome: 'Ana Souza', unidade: 'UBS Leste' },
+          'gestor': { senha: 'gestor123', perfil: 'gestor', nome: 'Marcos Pereira', unidade: 'Secretaria de Saúde' }
+        };
+        
+        // Verificar se o usuário existe
+        if (!usuarios[username]) {
+          console.error(`Usuário "${username}" não encontrado no sistema`);
+          errorMessage.style.display = 'block';
+          errorMessage.textContent = 'Usuário não encontrado. Verifique suas credenciais.';
+          document.getElementById('password').value = '';
+          document.getElementById('username').focus();
+          return;
+        }
+        
+        logDebug('Senha fornecida:', password);
+        logDebug('Senha esperada:', usuarios[username].senha);
+        
+        // Verificar a senha
+        if (usuarios[username].senha === password) {
+          logDebug('Senha correta! Login bem-sucedido');
+          
+          // Login bem-sucedido - salvar dados do usuário no sessionStorage
+          const usuario = usuarios[username];
+          
+          console.log('Login bem-sucedido para:', username);
+          
+          // Adicionar permissões baseadas no perfil
+          switch(usuario.perfil) {
+            case 'admin':
+              usuario.permissoes = ['*']; // Admin tem todas as permissões
+              break;
+            case 'regulador':
+              usuario.permissoes = ['visualizar_solicitacoes', 'atualizar_status', 'visualizar_estatisticas'];
+              break;
+            case 'ubs':
+              usuario.permissoes = ['criar_solicitacao', 'visualizar_solicitacoes', 'editar_solicitacao', 'visualizar_historico'];
+              break;
+            case 'medico':
+              usuario.permissoes = ['criar_solicitacao', 'visualizar_solicitacoes', 'editar_solicitacao', 'visualizar_historico', 'assinar_solicitacao'];
+              break;
+            case 'atendente':
+              usuario.permissoes = ['criar_solicitacao', 'visualizar_cotas'];
+              break;
+            case 'gestor':
+              usuario.permissoes = ['visualizar_estatisticas', 'visualizar_relatorios', 'gerenciar_cotas'];
+              break;
+            default:
+              usuario.permissoes = []; // Perfil desconhecido não tem permissões
+          }
+          
+          // Criar cópia do objeto para debug
+          const usuarioCopia = JSON.parse(JSON.stringify(usuario));
+          logDebug('Objeto de usuário preparado:', usuarioCopia);
+          
+          // Limpar quaisquer sessões existentes antes de definir a nova
+          try {
+            sessionStorage.clear();
+            logDebug('Sessão anterior limpa com sucesso');
+          } catch (e) {
+            console.error('Erro ao limpar sessão anterior:', e);
+          }
+          
+          // Salvar dados do usuário na sessão
+          try {
+            const usuarioJSON = JSON.stringify(usuario);
+            logDebug('String JSON do usuário:', usuarioJSON);
+            
+            sessionStorage.setItem('usuarioAtual', usuarioJSON);
+            logDebug('Dados do usuário salvos com sucesso');
+            
+            // Verificar imediatamente
+            const verificacaoRapida = sessionStorage.getItem('usuarioAtual');
+            logDebug('Verificação imediata após salvar:', verificacaoRapida ? 'OK' : 'FALHA');
+          } catch (e) {
+            console.error('Erro ao salvar dados do usuário:', e);
+            alert('Erro ao salvar dados do usuário. Verifique se seu navegador permite armazenamento de sessão.');
+            return;
+          }
+          
+          // Verificar se os dados foram realmente salvos
+          const testeSessao = sessionStorage.getItem('usuarioAtual');
+          if (!testeSessao) {
+            console.error('Falha na persistência da sessão. Dados não foram salvos.');
+            alert('Erro ao salvar dados do usuário. Tente novamente ou use outro navegador.');
+            return;
+          } else {
+            logDebug('Verificação de persistência OK. Dados na sessão:', testeSessao);
+            
+            try {
+              const objetoRecuperado = JSON.parse(testeSessao);
+              logDebug('Objeto recuperado válido:', objetoRecuperado.perfil);
+            } catch (e) {
+              console.error('Erro ao analisar objeto recuperado:', e);
+            }
+          }
+          
+          // Adicionar mensagem de carregamento
+          document.body.insertAdjacentHTML('beforeend', `
+            <div id="loading-overlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); 
+                 display:flex; align-items:center; justify-content:center; z-index:9999;">
+              <div style="background:white; padding:2rem; border-radius:8px; text-align:center;">
+                <div style="margin-bottom:1rem;">Entrando como ${usuario.nome}</div>
+                <div style="width:50px; height:50px; border:5px solid #f3f3f3; 
+                     border-top:5px solid var(--cor-primaria); border-radius:50%; 
+                     margin:0 auto; animation:spin 1s linear infinite;"></div>
+                <style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
+              </div>
+            </div>
+          `);
+          
+          // Redirecionar com base no perfil após breve delay para mostrar animação
+          setTimeout(() => {
+            // Perfis que devem acessar a interface UBS
+            const perfisUBS = ['ubs', 'medico', 'atendente'];
+            
+            // Verificar novamente a persistência da sessão antes de redirecionar
+            const verificaSessao = sessionStorage.getItem('usuarioAtual');
+            if (!verificaSessao) {
+              console.error('Dados de sessão perdidos antes do redirecionamento!');
+              alert('Erro ao manter dados do usuário. Por favor, tente novamente.');
+              return;
+            }
+            
+            // Verificar força bruta para garantir que o perfil esteja correto 
+            try {
+              const perfil = JSON.parse(verificaSessao).perfil;
+              logDebug(`Perfil antes do redirecionamento: ${perfil}`);
+              
+              // Redirecionamento baseado no perfil
+              const destino = perfisUBS.includes(perfil) ? 'sistema-ubs.html' : 'sistema-central-regulacao.html';
+              logDebug(`Redirecionando para: ${destino}`);
+              
+              // Forçar navegação direta
+              window.location.href = destino;
+            } catch (e) {
+              console.error('Erro durante o redirecionamento:', e);
+              alert('Erro ao redirecionar. Por favor, tente acessar manualmente a página do sistema.');
+            }
+          }, 1500);
+        } else {
+          // Senha incorreta
+          console.error('Senha incorreta para usuário:', username);
+          errorMessage.style.display = 'block';
+          errorMessage.textContent = 'Senha incorreta. Por favor, tente novamente.';
+          
+          // Limpar a senha
+          document.getElementById('password').value = '';
+          
+          // Focar no campo de senha
+          document.getElementById('password').focus();
+        }
+      });
+    });
+  </script>
+</body>
+</html> 

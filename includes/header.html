@@ -1,0 +1,84 @@
+<header class="header">
+  <div class="logo-container">
+    <img src="logo-sus.png" alt="Logo SUS" class="logo">
+    <h1>Sistema de Regulação UBS</h1>
+  </div>
+  
+  <nav class="header-nav">
+    <ul class="main-menu">
+      <li class="menu-item"><a href="index.html" id="nav-home">Dashboard</a></li>
+      <li class="menu-item dropdown">
+        <a href="#" id="nav-interfaces">Interfaces<span class="dropdown-arrow">▼</span></a>
+        <ul class="dropdown-menu">
+          <li><a href="sistema-ubs.html">UBS</a></li>
+          <li><a href="sistema-central-regulacao.html">Central de Regulação</a></li>
+        </ul>
+      </li>
+      <li class="menu-item"><a href="etapa1.html" id="nav-solicitar">Nova Solicitação</a></li>
+      <li class="menu-item dropdown" id="menu-admin" style="display: none;">
+        <a href="#" id="nav-admin">Administração<span class="dropdown-arrow">▼</span></a>
+        <ul class="dropdown-menu">
+          <li><a href="#" id="nav-usuarios">Usuários</a></li>
+          <li><a href="#" id="nav-cotas">Cotas</a></li>
+          <li><a href="#" id="nav-logs">Logs</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+  
+  <div class="user-info">
+    <span id="user-info-name">Usuário</span>
+    <span id="user-info-role">Perfil</span>
+    <button id="btn-logout" class="btn-logout">Sair</button>
+  </div>
+  
+  <div id="api-status" class="api-status offline">API Offline</div>
+</header>
+
+<script type="module">
+  import authService from '../scripts/auth.js';
+  import dependenciasManager from '../scripts/dependencias.js';
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    // Verificar status das dependências
+    dependenciasManager.verificarStatus();
+    
+    // Atualizar informações do usuário
+    atualizarInfoUsuario();
+    
+    // Configurar logout
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      authService.logout();
+      window.location.href = 'login-central-regulacao.html';
+    });
+    
+    // Mostrar/ocultar seções administrativas baseado no perfil do usuário
+    if (authService.temPerfil('admin')) {
+      document.getElementById('menu-admin').style.display = 'block';
+    }
+    
+    // Marcar item de menu atual como ativo
+    const path = window.location.pathname;
+    const filename = path.substring(path.lastIndexOf('/') + 1);
+    
+    const menuLinks = document.querySelectorAll('.header-nav a');
+    menuLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href === filename) {
+        link.parentElement.classList.add('active');
+      }
+    });
+  });
+  
+  function atualizarInfoUsuario() {
+    const usuario = authService.getUsuarioAtual();
+    
+    if (usuario) {
+      document.getElementById('user-info-name').textContent = usuario.nome;
+      document.getElementById('user-info-role').textContent = usuario.perfil;
+    } else {
+      document.getElementById('user-info-name').textContent = 'Não autenticado';
+      document.getElementById('user-info-role').textContent = '';
+    }
+  }
+</script> 

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnóstico do Sistema UBS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    h2 {
+      color: #2980b9;
+      margin-top: 30px;
+    }
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 25px;
+    }
+    li {
+      margin-bottom: 10px;
+    }
+    .erro {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    .sucesso {
+      background-color: #d4edda;
+      color: #155724;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    .info {
+      background-color: #d1ecf1;
+      color: #0c5460;
+      padding: 10px 15px;
+      border-radius: 4px;
+      margin: 20px 0;
+    }
+    code {
+      background-color: #f1f1f1;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    #resultados {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+    }
+    .mensagem {
+      margin-bottom: 15px;
+      padding: 8px;
+      border-left: 3px solid #3498db;
+      background-color: #f8f9fa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Diagnóstico do Sistema UBS</h1>
+    
+    <div class="info">
+      Este utilitário vai ajudar a diagnosticar e corrigir problemas com o Sistema UBS Local.
+    </div>
+    
+    <h2>Problema: "Nada aparece no navegador"</h2>
+    
+    <p>Existem algumas possíveis causas para este problema:</p>
+    
+    <ol>
+      <li>Os arquivos CSS não estão sendo carregados corretamente</li>
+      <li>Há um erro de JavaScript que impede a renderização da página</li>
+      <li>A estrutura de pastas do projeto está incompleta</li>
+      <li>Os arquivos de formulários faltantes estão causando erros</li>
+    </ol>
+    
+    <h2>Verificações</h2>
+    
+    <button id="verificarCSS">Verificar Arquivos CSS</button>
+    <button id="verificarJS">Verificar JavaScript</button>
+    <button id="verificarFormularios">Verificar Formulários</button>
+    <button id="verificarEstruturaPassas">Verificar Estrutura de Pastas</button>
+    
+    <div id="resultados">
+      <p>Clique nos botões acima para realizar diagnósticos.</p>
+    </div>
+    
+    <h2>Solução Rápida</h2>
+    
+    <p>Se você estiver com pressa, tente uma destas soluções:</p>
+    
+    <ul>
+      <li>
+        <strong>Abra o arquivo <code>index.html</code> diretamente no navegador</strong><br>
+        Em vez de usar um servidor local, abra o arquivo diretamente. Os módulos JavaScript podem não funcionar, mas você verá se o problema está no CSS.
+      </li>
+      <li>
+        <strong>Verifique se o console do navegador mostra erros</strong><br>
+        Pressione F12 no navegador para abrir as ferramentas de desenvolvedor e verifique a aba "Console" para ver possíveis erros.
+      </li>
+      <li>
+        <strong>Modifique o arquivo <code>etapa1.html</code></strong><br>
+        Edite o arquivo para mostrar apenas as opções que têm formulários correspondentes: "ressonancia", "mamografia" e "lme".
+      </li>
+    </ul>
+    
+    <h2>Instruções para a Solução Completa</h2>
+    
+    <p>Conforme identificamos anteriormente, o problema principal está relacionado aos formulários faltantes. Siga estas etapas:</p>
+    
+    <ol>
+      <li>
+        <strong>Complete os formulários faltantes:</strong>
+        <ul>
+          <li>Crie os arquivos <code>forms/aih.html</code>, <code>forms/ambulatorial.html</code> e <code>forms/especialidades.html</code></li>
+          <li>Use os formulários existentes como modelo (<code>ressonancia.html</code>, <code>mamografia.html</code> e <code>lme.html</code>)</li>
+        </ul>
+      </li>
+      <li>
+        <strong>OU modifique o arquivo <code>etapa1.html</code>:</strong>
+        <ul>
+          <li>Edite o select de tipos de procedimentos para incluir apenas os que já têm formulários</li>
+          <li>Isso evitará erros de páginas não encontradas</li>
+        </ul>
+      </li>
+      <li>
+        <strong>Verifique se todos os caminhos nos arquivos HTML estão corretos</strong> (ex: <code>../styles/variables.css</code> em vez de <code>styles/variables.css</code>)
+      </li>
+    </ol>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const resultados = document.getElementById('resultados');
+      
+      // Verificar CSS
+      document.getElementById('verificarCSS').addEventListener('click', () => {
+        const estilos = [
+          { arquivo: 'styles/variables.css', descricao: 'Variáveis CSS' },
+          { arquivo: 'styles/global.css', descricao: 'Estilos globais' },
+          { arquivo: 'styles/forms.css', descricao: 'Estilos de formulários' },
+          { arquivo: 'styles/dashboard.css', descricao: 'Estilos de dashboard' },
+          { arquivo: 'styles/tables.css', descricao: 'Estilos de tabelas' }
+        ];
+        
+        resultados.innerHTML = '<h3>Verificando arquivos CSS...</h3>';
+        
+        let mensagens = '';
+        
+        estilos.forEach(estilo => {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = estilo.arquivo;
+          
+          link.onload = () => {
+            mensagens += `<div class="mensagem sucesso">✅ ${estilo.descricao} carregado com sucesso</div>`;
+            resultados.innerHTML = mensagens;
+          };
+          
+          link.onerror = () => {
+            mensagens += `<div class="mensagem erro">❌ Erro ao carregar ${estilo.descricao}</div>`;
+            resultados.innerHTML = mensagens;
+          };
+          
+          document.head.appendChild(link);
+        });
+      });
+      
+      // Verificar JavaScript
+      document.getElementById('verificarJS').addEventListener('click', () => {
+        resultados.innerHTML = '<h3>Verificando arquivos JavaScript...</h3>';
+        
+        try {
+          const script = document.createElement('script');
+          script.type = 'module';
+          script.textContent = `
+            import { obterTodasSolicitacoes } from './scripts/storage.js';
+            import { mostrarNotificacao } from './scripts/utils.js';
+            import { validarFormulario } from './scripts/validacoes.js';
+            
+            // Se chegou aqui, os imports funcionaram
+            document.getElementById('resultados').innerHTML += '<div class="mensagem sucesso">✅ Módulos JavaScript carregados corretamente</div>';
+          `;
+          
+          document.head.appendChild(script);
+          
+          // Verificar se há erros no console
+          if (typeof window.console._commandLineAPI !== 'undefined') {
+            console.log('Verificando erros no console...');
+          }
+          
+          resultados.innerHTML += '<div class="mensagem info">⚠️ Verifique o console do navegador (F12) para ver erros JavaScript.</div>';
+        } catch (erro) {
+          resultados.innerHTML += `<div class="mensagem erro">❌ Erro no JavaScript: ${erro.message}</div>`;
+        }
+      });
+      
+      // Verificar Formulários
+      document.getElementById('verificarFormularios').addEventListener('click', () => {
+        resultados.innerHTML = '<h3>Verificando formulários disponíveis...</h3>';
+        
+        const formularios = [
+          { arquivo: 'forms/ressonancia.html', descricao: 'Ressonância Magnética' },
+          { arquivo: 'forms/mamografia.html', descricao: 'Mamografia' },
+          { arquivo: 'forms/lme.html', descricao: 'LME' },
+          { arquivo: 'forms/aih.html', descricao: 'AIH' },
+          { arquivo: 'forms/ambulatorial.html', descricao: 'Procedimento Ambulatorial' },
+          { arquivo: 'forms/especialidades.html', descricao: 'Consulta de Especialidade' }
+        ];
+        
+        let mensagens = '';
+        let formulariosEncontrados = 0;
+        let formulariosVerificados = 0;
+        
+        formularios.forEach(formulario => {
+          fetch(formulario.arquivo)
+            .then(response => {
+              formulariosVerificados++;
+              if (response.ok) {
+                formulariosEncontrados++;
+                mensagens += `<div class="mensagem sucesso">✅ Formulário de ${formulario.descricao} encontrado</div>`;
+              } else {
+                mensagens += `<div class="mensagem erro">❌ Formulário de ${formulario.descricao} não encontrado</div>`;
+              }
+              
+              if (formulariosVerificados === formularios.length) {
+                if (formulariosEncontrados < formularios.length) {
+                  mensagens += `<div class="mensagem info">⚠️ Formulários faltantes detectados! Isso pode ser a causa do problema.</div>`;
+                } else {
+                  mensagens += `<div class="mensagem sucesso">✅ Todos os formulários estão presentes.</div>`;
+                }
+              }
+              
+              resultados.innerHTML = mensagens;
+            })
+            .catch(error => {
+              formulariosVerificados++;
+              mensagens += `<div class="mensagem erro">❌ Erro ao verificar ${formulario.descricao}: ${error.message}</div>`;
+              resultados.innerHTML = mensagens;
+            });
+        });
+      });
+      
+      // Verificar Estrutura de Pastas
+      document.getElementById('verificarEstruturaPassas').addEventListener('click', () => {
+        resultados.innerHTML = '<h3>Verificando estrutura de pastas...</h3>';
+        
+        const pastas = [
+          { pasta: 'styles/', descricao: 'Estilos CSS' },
+          { pasta: 'scripts/', descricao: 'Scripts JavaScript' },
+          { pasta: 'forms/', descricao: 'Formulários específicos' }
+        ];
+        
+        let mensagens = '';
+        let pastasVerificadas = 0;
+        
+        pastas.forEach(pasta => {
+          fetch(pasta.pasta)
+            .then(response => {
+              pastasVerificadas++;
+              if (response.ok) {
+                mensagens += `<div class="mensagem sucesso">✅ Pasta de ${pasta.descricao} encontrada</div>`;
+              } else {
+                mensagens += `<div class="mensagem erro">❌ Pasta de ${pasta.descricao} não encontrada ou vazia</div>`;
+              }
+              
+              if (pastasVerificadas === pastas.length) {
+                resultados.innerHTML = mensagens;
+              }
+            })
+            .catch(error => {
+              pastasVerificadas++;
+              mensagens += `<div class="mensagem erro">❌ Erro ao verificar pasta de ${pasta.descricao}: ${error.message}</div>`;
+              resultados.innerHTML = mensagens;
+            });
+        });
+      });
+    });
+  </script>
+</body>
+</html> 

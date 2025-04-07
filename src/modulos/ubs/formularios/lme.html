@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UBS Local - LME (Laudo para Medicação Especializada)</title>
+  <link rel="stylesheet" href="../styles/variables.css">
+  <link rel="stylesheet" href="../styles/global.css">
+  <link rel="stylesheet" href="../styles/forms.css">
+  <style>
+    .resumo-paciente {
+      background-color: var(--cor-fundo-claro);
+      padding: 1rem;
+      border-radius: var(--borda-arredondada);
+      margin-bottom: 1.5rem;
+      border-left: 4px solid var(--cor-destaque);
+    }
+    
+    .resumo-paciente h4 {
+      margin-top: 0;
+      color: var(--cor-destaque);
+    }
+    
+    .resumo-paciente p {
+      margin: 0.25rem 0;
+    }
+    
+    .resumo-paciente .info-paciente {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .resumo-paciente .info-item {
+      flex: 1 1 200px;
+    }
+    
+    #mensagemValidacao {
+      color: var(--cor-erro);
+      display: none;
+      margin: 1rem 0;
+      padding: 0.75rem;
+      background-color: rgba(231, 76, 60, 0.1);
+      border-radius: var(--borda-arredondada);
+      border-left: 4px solid var(--cor-erro);
+    }
+    
+    .botoes-navegacao {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .medicamento-item {
+      border: 1px solid var(--cor-borda);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: var(--borda-arredondada);
+      background-color: #f9f9f9;
+    }
+    
+    .btn-remover {
+      background-color: var(--cor-erro);
+      color: white;
+      padding: 0.5rem;
+      font-size: 0.8rem;
+      border-radius: var(--borda-arredondada-pequena);
+      margin-top: 0.5rem;
+      cursor: pointer;
+    }
+    
+    #btnAdicionarMedicamento {
+      margin-top: 1rem;
+      background-color: var(--cor-info);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="cabecalho">
+      <h1>UBS Local</h1>
+      <p>Sistema de Regulação Municipal</p>
+    </header>
+    
+    <main>
+      <section class="card">
+        <h2>LME - Laudo para Medicação Especializada</h2>
+        
+        <div class="resumo-paciente">
+          <h4>Dados do Paciente</h4>
+          <div class="info-paciente">
+            <div class="info-item">
+              <p><strong>Nome:</strong> <span id="resumoNomePaciente">-</span></p>
+              <p><strong>Data de Nascimento:</strong> <span id="resumoDataNascimento">-</span></p>
+            </div>
+            <div class="info-item">
+              <p><strong>CNS:</strong> <span id="resumoCnsPaciente">-</span></p>
+              <p><strong>Unidade:</strong> <span id="resumoNomeUnidade">-</span></p>
+            </div>
+          </div>
+        </div>
+        
+        <form id="formLME">
+          <div class="secao-form">
+            <h3>Diagnóstico e Anamnese</h3>
+            
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="cid10Principal" class="obrigatorio">CID-10 Principal</label>
+                <input type="text" id="cid10Principal" name="cid10Principal" required placeholder="Ex: G35">
+              </div>
+              
+              <div class="campo">
+                <label for="cid10Secundario">CID-10 Secundário</label>
+                <input type="text" id="cid10Secundario" name="cid10Secundario">
+              </div>
+              
+              <div class="campo">
+                <label for="dataInicioDiagnostico" class="obrigatorio">Data do Diagnóstico</label>
+                <input type="date" id="dataInicioDiagnostico" name="dataInicioDiagnostico" required>
+              </div>
+            </div>
+            
+            <div class="campo">
+              <label for="anamnese" class="obrigatorio">Anamnese (História Clínica)</label>
+              <textarea id="anamnese" name="anamnese" rows="4" required
+                        placeholder="Descreva detalhadamente o histórico clínico do paciente, incluindo início dos sintomas, progressão da doença e tratamentos anteriores..."></textarea>
+            </div>
+          </div>
+          
+          <div class="secao-form">
+            <h3>Medicamentos Solicitados</h3>
+            <p>Adicione os medicamentos necessários para o tratamento do paciente.</p>
+            
+            <div id="listaMedicamentos">
+              <!-- Os medicamentos serão adicionados dinamicamente aqui -->
+              <div class="medicamento-item" data-index="0">
+                <div class="campo-grupo">
+                  <div class="campo">
+                    <label for="medicamento_0" class="obrigatorio">Medicamento</label>
+                    <input type="text" id="medicamento_0" name="medicamentos[0][nome]" required placeholder="Nome do medicamento">
+                  </div>
+                  
+                  <div class="campo">
+                    <label for="concentracao_0" class="obrigatorio">Concentração</label>
+                    <input type="text" id="concentracao_0" name="medicamentos[0][concentracao]" required placeholder="Ex: 10mg">
+                  </div>
+                </div>
+                
+                <div class="campo-grupo">
+                  <div class="campo">
+                    <label for="posologia_0" class="obrigatorio">Posologia</label>
+                    <input type="text" id="posologia_0" name="medicamentos[0][posologia]" required placeholder="Ex: 1 comprimido, 2x ao dia">
+                  </div>
+                  
+                  <div class="campo">
+                    <label for="duracao_0" class="obrigatorio">Duração do Tratamento</label>
+                    <select id="duracao_0" name="medicamentos[0][duracao]" required>
+                      <option value="">Selecione...</option>
+                      <option value="1">1 mês</option>
+                      <option value="2">2 meses</option>
+                      <option value="3">3 meses</option>
+                      <option value="6">6 meses</option>
+                      <option value="12">12 meses</option>
+                      <option value="continuo">Contínuo</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="campo">
+                  <label for="justificativa_0">Justificativa Clínica</label>
+                  <textarea id="justificativa_0" name="medicamentos[0][justificativa]" rows="2"
+                            placeholder="Justifique a necessidade deste medicamento específico"></textarea>
+                </div>
+                
+                <button type="button" class="btn-remover" onclick="removerMedicamento(0)">Remover Medicamento</button>
+              </div>
+            </div>
+            
+            <button type="button" id="btnAdicionarMedicamento" class="btn">Adicionar Outro Medicamento</button>
+          </div>
+          
+          <div class="secao-form">
+            <h3>Informações Complementares</h3>
+            
+            <div class="campo-grupo">
+              <div class="campo">
+                <label>O paciente já utilizou outros medicamentos para esta doença?</label>
+                <div class="opcoes-radio">
+                  <div class="radio-item">
+                    <input type="radio" id="tratamentoSim" name="tratamentoAnterior" value="sim">
+                    <label for="tratamentoSim">Sim</label>
+                  </div>
+                  <div class="radio-item">
+                    <input type="radio" id="tratamentoNao" name="tratamentoAnterior" value="nao">
+                    <label for="tratamentoNao">Não</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div id="campoTratamentosAnteriores" style="display: none;">
+              <div class="campo">
+                <label for="tratamentosAnteriores">Descreva os medicamentos anteriores e motivos de substituição</label>
+                <textarea id="tratamentosAnteriores" name="tratamentosAnteriores" rows="2"
+                          placeholder="Liste medicamentos já utilizados e o motivo da substituição"></textarea>
+              </div>
+            </div>
+            
+            <div class="campo">
+              <label for="outrasInfos">Observações Adicionais</label>
+              <textarea id="outrasInfos" name="outrasInfos" rows="3"
+                        placeholder="Informações relevantes para análise da solicitação..."></textarea>
+            </div>
+          </div>
+          
+          <div class="secao-form">
+            <h3>Dados do Profissional Solicitante</h3>
+            
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="nomeMedico" class="obrigatorio">Nome do Médico</label>
+                <input type="text" id="nomeMedico" name="nomeMedico" required>
+              </div>
+              
+              <div class="campo">
+                <label for="crmMedico" class="obrigatorio">CRM</label>
+                <input type="text" id="crmMedico" name="crmMedico" required>
+              </div>
+              
+              <div class="campo">
+                <label for="especialidade" class="obrigatorio">Especialidade</label>
+                <input type="text" id="especialidade" name="especialidade" required>
+              </div>
+            </div>
+            
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="dataEmissao" class="obrigatorio">Data da Solicitação</label>
+                <input type="date" id="dataEmissao" name="dataEmissao" required>
+              </div>
+            </div>
+          </div>
+          
+          <div id="mensagemValidacao">
+            Por favor, preencha todos os campos obrigatórios antes de enviar.
+          </div>
+          
+          <div class="botoes-navegacao">
+            <button type="button" class="btn secundario" id="btnVoltar">Voltar</button>
+            <button type="button" class="btn secundario" id="btnSalvarRascunho">Salvar Rascunho</button>
+            <button type="button" class="btn primario" id="btnEnviar">Enviar Solicitação</button>
+          </div>
+        </form>
+      </section>
+    </main>
+    
+    <footer>
+      <p>&copy; 2023 UBS Local - Sistema de Regulação Municipal</p>
+    </footer>
+  </div>
+  
+  <script type="module">
+    import { obterDadosEtapa1, salvarFormulario } from '../scripts/storage.js';
+    import { validarFormulario } from '../scripts/validacoes.js';
+    import { mostrarNotificacao, formatarData } from '../scripts/utils.js';
+    
+    // Contador para os medicamentos
+    let medicamentoCounter = 1;
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('formLME');
+      const btnVoltar = document.getElementById('btnVoltar');
+      const btnSalvarRascunho = document.getElementById('btnSalvarRascunho');
+      const btnEnviar = document.getElementById('btnEnviar');
+      const mensagemValidacao = document.getElementById('mensagemValidacao');
+      const btnAdicionarMedicamento = document.getElementById('btnAdicionarMedicamento');
+      const tratamentoSim = document.getElementById('tratamentoSim');
+      const tratamentoNao = document.getElementById('tratamentoNao');
+      const campoTratamentosAnteriores = document.getElementById('campoTratamentosAnteriores');
+      
+      // Carregar dados do paciente da etapa 1
+      carregarDadosPaciente();
+      
+      // Inicializar a data de solicitação com a data atual
+      document.getElementById('dataEmissao').valueAsDate = new Date();
+      
+      // Adicionar evento para mostrar/esconder campos de tratamentos anteriores
+      tratamentoSim.addEventListener('change', () => {
+        campoTratamentosAnteriores.style.display = 'block';
+      });
+      
+      tratamentoNao.addEventListener('change', () => {
+        campoTratamentosAnteriores.style.display = 'none';
+      });
+      
+      // Handler para adicionar medicamento
+      btnAdicionarMedicamento.addEventListener('click', () => {
+        adicionarMedicamento();
+      });
+      
+      // Handler para voltar
+      btnVoltar.addEventListener('click', () => {
+        window.location.href = '../etapa1.html';
+      });
+      
+      // Handler para salvar rascunho
+      btnSalvarRascunho.addEventListener('click', () => {
+        const dados = coletarDadosFormulario();
+        salvarFormulario('lme', dados);
+        mostrarNotificacao('Rascunho salvo com sucesso!', 'sucesso');
+      });
+      
+      // Handler para enviar solicitação
+      btnEnviar.addEventListener('click', () => {
+        // Validar formulário
+        const resultadoValidacao = validarFormulario(form);
+        
+        if (resultadoValidacao.valido) {
+          const dados = coletarDadosFormulario();
+          
+          // Salvar formulário como enviado
+          const idSolicitacao = salvarFormulario('lme', dados);
+          
+          // Em produção: enviar para API
+          // Simulação de envio bem-sucedido
+          setTimeout(() => {
+            // Mostrar confirmação
+            mostrarNotificacao('Solicitação enviada com sucesso! Protocolo: ' + idSolicitacao, 'sucesso');
+            
+            // Redirecionar para página de acompanhamento
+            setTimeout(() => {
+              window.location.href = '../index.html';
+            }, 1500);
+          }, 1000);
+        } else {
+          mensagemValidacao.style.display = 'block';
+          // Rolar até a mensagem de validação
+          mensagemValidacao.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+      
+      // Função para coletar dados do formulário, incluindo todos os medicamentos
+      function coletarDadosFormulario() {
+        const formData = new FormData(form);
+        const dados = Object.fromEntries(formData.entries());
+        
+        // Coletar medicamentos
+        const medicamentos = [];
+        document.querySelectorAll('.medicamento-item').forEach((item, index) => {
+          const medicamento = {
+            nome: document.getElementById(`medicamento_${index}`).value,
+            concentracao: document.getElementById(`concentracao_${index}`).value,
+            posologia: document.getElementById(`posologia_${index}`).value,
+            duracao: document.getElementById(`duracao_${index}`).value,
+            justificativa: document.getElementById(`justificativa_${index}`).value || ''
+          };
+          medicamentos.push(medicamento);
+        });
+        
+        dados.medicamentos = medicamentos;
+        
+        return dados;
+      }
+      
+      // Função para carregar dados do paciente salvos na etapa 1
+      function carregarDadosPaciente() {
+        const dadosPaciente = obterDadosEtapa1();
+        
+        // Se não tiver dados do paciente, redirecionar para etapa 1
+        if (!dadosPaciente || Object.keys(dadosPaciente).length === 0) {
+          mostrarNotificacao('Dados do paciente não encontrados. Por favor, preencha a etapa 1.', 'erro');
+          setTimeout(() => {
+            window.location.href = '../etapa1.html';
+          }, 1500);
+          return;
+        }
+        
+        // Preencher o resumo do paciente
+        document.getElementById('resumoNomePaciente').textContent = dadosPaciente.nomePaciente || '-';
+        
+        // Formatar a data de nascimento
+        let dataNascimentoFormatada = '-';
+        if (dadosPaciente.dataNascimento) {
+          dataNascimentoFormatada = formatarData(dadosPaciente.dataNascimento);
+        }
+        document.getElementById('resumoDataNascimento').textContent = dataNascimentoFormatada;
+        
+        document.getElementById('resumoCnsPaciente').textContent = dadosPaciente.cnsPaciente || '-';
+        document.getElementById('resumoNomeUnidade').textContent = dadosPaciente.nomeUnidade || '-';
+      }
+    });
+    
+    // Função para adicionar um novo medicamento
+    function adicionarMedicamento() {
+      const listaMedicamentos = document.getElementById('listaMedicamentos');
+      const novoIndex = medicamentoCounter++;
+      
+      const medicamentoItem = document.createElement('div');
+      medicamentoItem.className = 'medicamento-item';
+      medicamentoItem.dataset.index = novoIndex;
+      
+      medicamentoItem.innerHTML = `
+        <div class="campo-grupo">
+          <div class="campo">
+            <label for="medicamento_${novoIndex}" class="obrigatorio">Medicamento</label>
+            <input type="text" id="medicamento_${novoIndex}" name="medicamentos[${novoIndex}][nome]" required placeholder="Nome do medicamento">
+          </div>
+          
+          <div class="campo">
+            <label for="concentracao_${novoIndex}" class="obrigatorio">Concentração</label>
+            <input type="text" id="concentracao_${novoIndex}" name="medicamentos[${novoIndex}][concentracao]" required placeholder="Ex: 10mg">
+          </div>
+        </div>
+        
+        <div class="campo-grupo">
+          <div class="campo">
+            <label for="posologia_${novoIndex}" class="obrigatorio">Posologia</label>
+            <input type="text" id="posologia_${novoIndex}" name="medicamentos[${novoIndex}][posologia]" required placeholder="Ex: 1 comprimido, 2x ao dia">
+          </div>
+          
+          <div class="campo">
+            <label for="duracao_${novoIndex}" class="obrigatorio">Duração do Tratamento</label>
+            <select id="duracao_${novoIndex}" name="medicamentos[${novoIndex}][duracao]" required>
+              <option value="">Selecione...</option>
+              <option value="1">1 mês</option>
+              <option value="2">2 meses</option>
+              <option value="3">3 meses</option>
+              <option value="6">6 meses</option>
+              <option value="12">12 meses</option>
+              <option value="continuo">Contínuo</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="campo">
+          <label for="justificativa_${novoIndex}">Justificativa Clínica</label>
+          <textarea id="justificativa_${novoIndex}" name="medicamentos[${novoIndex}][justificativa]" rows="2"
+                    placeholder="Justifique a necessidade deste medicamento específico"></textarea>
+        </div>
+        
+        <button type="button" class="btn-remover" onclick="removerMedicamento(${novoIndex})">Remover Medicamento</button>
+      `;
+      
+      listaMedicamentos.appendChild(medicamentoItem);
+    }
+    
+    // Função para remover um medicamento
+    window.removerMedicamento = function(index) {
+      const listaMedicamentos = document.getElementById('listaMedicamentos');
+      const medicamentoItem = document.querySelector(`.medicamento-item[data-index="${index}"]`);
+      
+      if (listaMedicamentos.children.length > 1) {
+        listaMedicamentos.removeChild(medicamentoItem);
+      } else {
+        alert('É necessário manter pelo menos um medicamento na solicitação.');
+      }
+    };
+  </script>
+</body>
+</html> 

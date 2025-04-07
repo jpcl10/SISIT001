@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gerenciamento de Usuários - Administração</title>
+  <script src="../debug-session.js"></script>
+  <link rel="stylesheet" href="../style-central.css" />
+  <style>
+    .admin-container {
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin: 20px auto;
+      max-width: 1200px;
+    }
+    
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .admin-title {
+      font-size: 1.6rem;
+      color: var(--cor-primaria);
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .user-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    
+    .user-table th,
+    .user-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .user-table th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: #495057;
+    }
+    
+    .user-table tr:hover {
+      background-color: #f8f9fa;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .status-active {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    
+    .status-inactive {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    
+    .btn-small {
+      padding: 4px 8px;
+      font-size: 0.8rem;
+    }
+    
+    #userFormModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .form-group {
+      flex: 1;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+    }
+    
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="logo-container">
+      <div class="text-logo">SUS<span>Digital</span></div>
+      <h1>Administração do Sistema</h1>
+    </div>
+    <div class="user-info">
+      <span id="user-role">Administrador</span>
+      <span id="user-name">Admin Sistema</span>
+      <button id="logout-btn" class="btn-logout">Sair</button>
+    </div>
+  </header>
+
+  <nav class="breadcrumb">
+    <ul>
+      <li><a href="../sistema-central-regulacao.html">Central de Regulação</a></li>
+      <li><a href="../sistema-ubs.html">Interface UBS</a></li>
+      <li class="active">Gerenciamento de Usuários</li>
+    </ul>
+  </nav>
+
+  <main class="admin-container">
+    <div class="admin-header">
+      <h2 class="admin-title">Gerenciamento de Usuários</h2>
+      <div class="action-buttons">
+        <button id="addUserBtn" class="btn btn-primary">Adicionar Usuário</button>
+        <button id="exportBtn" class="btn btn-secondary">Exportar Lista</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <input type="text" id="searchInput" class="form-control" placeholder="Buscar usuário...">
+      <select id="filterPerfil" class="form-control">
+        <option value="">Todos os perfis</option>
+        <option value="admin">Administrador</option>
+        <option value="regulador">Regulador</option>
+        <option value="ubs">UBS</option>
+        <option value="medico">Médico</option>
+        <option value="atendente">Atendente</option>
+        <option value="gestor">Gestor</option>
+      </select>
+      <select id="filterStatus" class="form-control">
+        <option value="">Todos os status</option>
+        <option value="active">Ativo</option>
+        <option value="inactive">Inativo</option>
+      </select>
+      <button id="filterBtn" class="btn btn-secondary">Filtrar</button>
+    </div>
+
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Usuário</th>
+          <th>Perfil</th>
+          <th>Unidade</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="userTableBody">
+        <tr>
+          <td>1</td>
+          <td>Admin Sistema</td>
+          <td>admin</td>
+          <td>Administrador</td>
+          <td>Central de Regulação</td>
+          <td><span class="status-badge status-active">Ativo</span></td>
+          <td>
+            <button class="btn btn-secondary btn-small">Editar</button>
+            <button class="btn btn-danger btn-small">Desativar</button>
+          </td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Dr. Carlos Santos</td>
+          <td>regulador</td>
+          <td>Regulador</td>
+          <td>Central de Regulação</td>
+          <td><span class="status-badge status-active">Ativo</span></td>
+          <td>
+            <button class="btn btn-secondary btn-small">Editar</button>
+            <button class="btn btn-danger btn-small">Desativar</button>
+          </td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Dr. Silva</td>
+          <td>ubs</td>
+          <td>UBS</td>
+          <td>UBS Central</td>
+          <td><span class="status-badge status-active">Ativo</span></td>
+          <td>
+            <button class="btn btn-secondary btn-small">Editar</button>
+            <button class="btn btn-danger btn-small">Desativar</button>
+          </td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Dra. Oliveira</td>
+          <td>medico</td>
+          <td>Médico</td>
+          <td>UBS Norte</td>
+          <td><span class="status-badge status-active">Ativo</span></td>
+          <td>
+            <button class="btn btn-secondary btn-small">Editar</button>
+            <button class="btn btn-danger btn-small">Desativar</button>
+          </td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Ana Souza</td>
+          <td>atendente</td>
+          <td>Atendente</td>
+          <td>UBS Leste</td>
+          <td><span class="status-badge status-active">Ativo</span></td>
+          <td>
+            <button class="btn btn-secondary btn-small">Editar</button>
+            <button class="btn btn-danger btn-small">Desativar</button>
+          </td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Marcos Pereira</td>
+          <td>gestor</td>
+          <td>Gestor</td>
+          <td>Secretaria de Saúde</td>
+          <td><span class="status-badge status-active">Ativo</span></td>
+          <td>
+            <button class="btn btn-secondary btn-small">Editar</button>
+            <button class="btn btn-danger btn-small">Desativar</button>
+          </td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Juliana Costa</td>
+          <td>juliana</td>
+          <td>Médico</td>
+          <td>UBS Sul</td>
+          <td><span class="status-badge status-inactive">Inativo</span></td>
+          <td>
+            <button class="btn btn-secondary btn-small">Editar</button>
+            <button class="btn btn-success btn-small">Ativar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button class="btn-page" disabled>&laquo; Anterior</button>
+      <span class="page-info">Página 1 de 1</span>
+      <button class="btn-page" disabled>Próxima &raquo;</button>
+    </div>
+  </main>
+
+  <!-- Modal para adicionar/editar usuário -->
+  <div id="userFormModal">
+    <div class="modal-content">
+      <h3 id="modalTitle">Adicionar Novo Usuário</h3>
+      <form id="userForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="userName">Nome</label>
+            <input type="text" id="userName" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="userLogin">Nome de Usuário</label>
+            <input type="text" id="userLogin" class="form-control" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="userPassword">Senha</label>
+            <input type="password" id="userPassword" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="userConfirmPassword">Confirmar Senha</label>
+            <input type="password" id="userConfirmPassword" class="form-control" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="userPerfil">Perfil</label>
+            <select id="userPerfil" class="form-control" required>
+              <option value="">Selecione um perfil</option>
+              <option value="admin">Administrador</option>
+              <option value="regulador">Regulador</option>
+              <option value="ubs">UBS</option>
+              <option value="medico">Médico</option>
+              <option value="atendente">Atendente</option>
+              <option value="gestor">Gestor</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="userUnidade">Unidade</label>
+            <select id="userUnidade" class="form-control" required>
+              <option value="">Selecione uma unidade</option>
+              <option value="Central de Regulação">Central de Regulação</option>
+              <option value="UBS Central">UBS Central</option>
+              <option value="UBS Norte">UBS Norte</option>
+              <option value="UBS Sul">UBS Sul</option>
+              <option value="UBS Leste">UBS Leste</option>
+              <option value="UBS Oeste">UBS Oeste</option>
+              <option value="Secretaria de Saúde">Secretaria de Saúde</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="userStatus">Status</label>
+          <select id="userStatus" class="form-control" required>
+            <option value="active">Ativo</option>
+            <option value="inactive">Inativo</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="closeModalBtn" class="btn btn-secondary">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2023 SUSDigital - Sistema de Regulação Municipal</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Variáveis do modal
+      const modal = document.getElementById('userFormModal');
+      const addUserBtn = document.getElementById('addUserBtn');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const userForm = document.getElementById('userForm');
+      const modalTitle = document.getElementById('modalTitle');
+      
+      // Botão Adicionar Usuário
+      addUserBtn.addEventListener('click', function() {
+        modalTitle.textContent = 'Adicionar Novo Usuário';
+        // Limpar formulário
+        userForm.reset();
+        // Exibir modal
+        modal.style.display = 'flex';
+      });
+      
+      // Botão Fechar Modal
+      closeModalBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+      });
+      
+      // Clicar fora do modal para fechá-lo
+      modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+      
+      // Enviar formulário
+      userForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validar se as senhas conferem
+        const password = document.getElementById('userPassword').value;
+        const confirmPassword = document.getElementById('userConfirmPassword').value;
+        
+        if (password !== confirmPassword) {
+          alert('As senhas não conferem!');
+          return;
+        }
+        
+        // Aqui seria feita a requisição para a API
+        console.log('Salvando usuário...');
+        
+        // Simulação de processamento
+        setTimeout(() => {
+          alert('Usuário salvo com sucesso!');
+          modal.style.display = 'none';
+        }, 1000);
+      });
+      
+      // Botões Editar
+      document.querySelectorAll('.btn-secondary.btn-small').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const row = this.closest('tr');
+          const id = row.cells[0].textContent;
+          const nome = row.cells[1].textContent;
+          const usuario = row.cells[2].textContent;
+          const perfil = row.cells[3].textContent;
+          const unidade = row.cells[4].textContent;
+          const status = row.cells[5].querySelector('.status-badge').classList.contains('status-active') ? 'active' : 'inactive';
+          
+          // Preencher formulário
+          document.getElementById('userName').value = nome;
+          document.getElementById('userLogin').value = usuario;
+          document.getElementById('userPassword').value = '********';
+          document.getElementById('userConfirmPassword').value = '********';
+          
+          // Converter perfil para value
+          const perfilSelect = document.getElementById('userPerfil');
+          for (let i = 0; i < perfilSelect.options.length; i++) {
+            if (perfilSelect.options[i].text === perfil) {
+              perfilSelect.selectedIndex = i;
+              break;
+            }
+          }
+          
+          // Selecionar unidade
+          const unidadeSelect = document.getElementById('userUnidade');
+          for (let i = 0; i < unidadeSelect.options.length; i++) {
+            if (unidadeSelect.options[i].value === unidade) {
+              unidadeSelect.selectedIndex = i;
+              break;
+            }
+          }
+          
+          // Selecionar status
+          document.getElementById('userStatus').value = status;
+          
+          // Atualizar título do modal
+          modalTitle.textContent = 'Editar Usuário';
+          
+          // Exibir modal
+          modal.style.display = 'flex';
+        });
+      });
+      
+      // Botões Ativar/Desativar
+      document.querySelectorAll('.btn-danger.btn-small, .btn-success.btn-small').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const row = this.closest('tr');
+          const nome = row.cells[1].textContent;
+          const ativar = this.classList.contains('btn-success');
+          
+          if (confirm(`Tem certeza que deseja ${ativar ? 'ativar' : 'desativar'} o usuário ${nome}?`)) {
+            // Aqui seria feita a requisição para a API
+            console.log(`${ativar ? 'Ativando' : 'Desativando'} usuário ${nome}...`);
+            
+            // Simulação de processamento
+            setTimeout(() => {
+              // Atualizar status na tabela
+              const statusBadge = row.cells[5].querySelector('.status-badge');
+              
+              if (ativar) {
+                statusBadge.textContent = 'Ativo';
+                statusBadge.classList.remove('status-inactive');
+                statusBadge.classList.add('status-active');
+                
+                // Atualizar botão
+                this.textContent = 'Desativar';
+                this.classList.remove('btn-success');
+                this.classList.add('btn-danger');
+              } else {
+                statusBadge.textContent = 'Inativo';
+                statusBadge.classList.remove('status-active');
+                statusBadge.classList.add('status-inactive');
+                
+                // Atualizar botão
+                this.textContent = 'Ativar';
+                this.classList.remove('btn-danger');
+                this.classList.add('btn-success');
+              }
+              
+              alert(`Usuário ${ativar ? 'ativado' : 'desativado'} com sucesso!`);
+            }, 1000);
+          }
+        });
+      });
+      
+      // Configurar botão de logout
+      document.getElementById('logout-btn').addEventListener('click', function() {
+        if (confirm('Tem certeza que deseja sair do sistema?')) {
+          // Limpar dados da sessão
+          sessionStorage.clear();
+          // Redirecionar para login
+          window.location.href = '../login-central-regulacao.html';
+        }
+      });
+      
+      // Filtro
+      document.getElementById('filterBtn').addEventListener('click', function() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const perfilFilter = document.getElementById('filterPerfil').value;
+        const statusFilter = document.getElementById('filterStatus').value;
+        
+        const rows = document.getElementById('userTableBody').getElementsByTagName('tr');
+        
+        for (let i = 0; i < rows.length; i++) {
+          const nome = rows[i].cells[1].textContent.toLowerCase();
+          const usuario = rows[i].cells[2].textContent.toLowerCase();
+          
+          const perfilCell = rows[i].cells[3].textContent;
+          const perfilMatch = perfilFilter === '' || perfilCell.toLowerCase().includes(perfilFilter.toLowerCase());
+          
+          const statusCell = rows[i].cells[5].querySelector('.status-badge');
+          const isActive = statusCell.classList.contains('status-active');
+          const statusMatch = statusFilter === '' || 
+                             (statusFilter === 'active' && isActive) || 
+                             (statusFilter === 'inactive' && !isActive);
+          
+          const searchMatch = searchTerm === '' || 
+                            nome.includes(searchTerm) || 
+                            usuario.includes(searchTerm);
+          
+          rows[i].style.display = (searchMatch && perfilMatch && statusMatch) ? '' : 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html> 

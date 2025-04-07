@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UBS Local - Consulta de Especialidade</title>
+  <link rel="stylesheet" href="../styles/variables.css">
+  <link rel="stylesheet" href="../styles/global.css">
+  <link rel="stylesheet" href="../styles/forms.css">
+  <style>
+    .resumo-paciente {
+      background-color: var(--cor-fundo-claro);
+      padding: 1rem;
+      border-radius: var(--borda-arredondada);
+      margin-bottom: 1.5rem;
+      border-left: 4px solid var(--cor-destaque);
+    }
+    
+    .resumo-paciente h4 {
+      margin-top: 0;
+      color: var(--cor-destaque);
+    }
+    
+    .resumo-paciente p {
+      margin: 0.25rem 0;
+    }
+    
+    .resumo-paciente .info-paciente {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .resumo-paciente .info-item {
+      flex: 1 1 200px;
+    }
+    
+    #mensagemValidacao {
+      color: var(--cor-erro);
+      display: none;
+      margin: 1rem 0;
+      padding: 0.75rem;
+      background-color: rgba(231, 76, 60, 0.1);
+      border-radius: var(--borda-arredondada);
+      border-left: 4px solid var(--cor-erro);
+    }
+    
+    .botoes-navegacao {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="cabecalho">
+      <h1>UBS Local</h1>
+      <p>Sistema de Regulação Municipal</p>
+    </header>
+    
+    <main>
+      <section class="card">
+        <h2>Solicitação de Consulta de Especialidade</h2>
+        
+        <div class="resumo-paciente">
+          <h4>Dados do Paciente</h4>
+          <div class="info-paciente">
+            <div class="info-item">
+              <p><strong>Nome:</strong> <span id="resumoNomePaciente">-</span></p>
+              <p><strong>Data de Nascimento:</strong> <span id="resumoDataNascimento">-</span></p>
+            </div>
+            <div class="info-item">
+              <p><strong>CNS:</strong> <span id="resumoCnsPaciente">-</span></p>
+              <p><strong>Unidade:</strong> <span id="resumoNomeUnidade">-</span></p>
+            </div>
+          </div>
+        </div>
+        
+        <form id="formEspecialidades">
+          <div class="secao-form">
+            <h3>Formulário em Desenvolvimento</h3>
+            <p>Este formulário está sendo desenvolvido e será disponibilizado em breve.</p>
+            <p>Por favor, utilize os campos abaixo para enviar informações básicas enquanto isso.</p>
+            
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="especialidade" class="obrigatorio">Especialidade</label>
+                <select id="especialidade" name="especialidade" required>
+                  <option value="">Selecione...</option>
+                  <option value="cardiologia">Cardiologia</option>
+                  <option value="dermatologia">Dermatologia</option>
+                  <option value="neurologia">Neurologia</option>
+                  <option value="oftalmologia">Oftalmologia</option>
+                  <option value="ortopedia">Ortopedia</option>
+                  <option value="psiquiatria">Psiquiatria</option>
+                  <option value="endocrinologia">Endocrinologia</option>
+                  <option value="otorrinolaringologia">Otorrinolaringologia</option>
+                  <option value="urologia">Urologia</option>
+                  <option value="ginecologia">Ginecologia</option>
+                  <option value="outro">Outra</option>
+                </select>
+              </div>
+              
+              <div class="campo">
+                <label for="outraEspecialidade">Especifique (se Outra)</label>
+                <input type="text" id="outraEspecialidade" name="outraEspecialidade">
+              </div>
+            </div>
+            
+            <div class="campo">
+              <label for="motivoEncaminhamento" class="obrigatorio">Motivo do Encaminhamento</label>
+              <textarea id="motivoEncaminhamento" name="motivoEncaminhamento" rows="4" required
+                        placeholder="Descreva o motivo do encaminhamento para esta especialidade..."></textarea>
+            </div>
+            
+            <div class="campo">
+              <label for="hipoteseDiagnostica" class="obrigatorio">Hipótese Diagnóstica</label>
+              <textarea id="hipoteseDiagnostica" name="hipoteseDiagnostica" rows="3" required
+                      placeholder="Descreva a hipótese diagnóstica..."></textarea>
+            </div>
+            
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="cid10Principal" class="obrigatorio">CID-10 Principal</label>
+                <input type="text" id="cid10Principal" name="cid10Principal" required>
+              </div>
+              
+              <div class="campo">
+                <label for="cid10Secundario">CID-10 Secundário</label>
+                <input type="text" id="cid10Secundario" name="cid10Secundario">
+              </div>
+            </div>
+          </div>
+          
+          <div class="secao-form">
+            <h3>Dados do Profissional Solicitante</h3>
+            
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="nomeMedico" class="obrigatorio">Nome do Médico</label>
+                <input type="text" id="nomeMedico" name="nomeMedico" required>
+              </div>
+              
+              <div class="campo">
+                <label for="crmMedico" class="obrigatorio">CRM</label>
+                <input type="text" id="crmMedico" name="crmMedico" required>
+              </div>
+            </div>
+            
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="dataEmissao" class="obrigatorio">Data da Solicitação</label>
+                <input type="date" id="dataEmissao" name="dataEmissao" required>
+              </div>
+              
+              <div class="campo">
+                <label for="prioridade" class="obrigatorio">Nível de Prioridade</label>
+                <select id="prioridade" name="prioridade" required>
+                  <option value="">Selecione...</option>
+                  <option value="eletiva">Eletiva</option>
+                  <option value="prioritaria">Prioritária</option>
+                  <option value="urgencia">Urgência</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          <div id="mensagemValidacao">
+            Por favor, preencha todos os campos obrigatórios antes de enviar.
+          </div>
+          
+          <div class="botoes-navegacao">
+            <button type="button" class="btn secundario" id="btnVoltar">Voltar</button>
+            <button type="button" class="btn secundario" id="btnSalvarRascunho">Salvar Rascunho</button>
+            <button type="button" class="btn primario" id="btnEnviar">Enviar Solicitação</button>
+          </div>
+        </form>
+      </section>
+    </main>
+    
+    <footer>
+      <p>&copy; 2023 UBS Local - Sistema de Regulação Municipal</p>
+    </footer>
+  </div>
+  
+  <script type="module">
+    import { obterDadosEtapa1, salvarFormulario } from '../scripts/storage.js';
+    import { validarFormulario } from '../scripts/validacoes.js';
+    import { mostrarNotificacao, formatarData } from '../scripts/utils.js';
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('formEspecialidades');
+      const btnVoltar = document.getElementById('btnVoltar');
+      const btnSalvarRascunho = document.getElementById('btnSalvarRascunho');
+      const btnEnviar = document.getElementById('btnEnviar');
+      const mensagemValidacao = document.getElementById('mensagemValidacao');
+      const especialidadeSelect = document.getElementById('especialidade');
+      const outraEspecialidadeField = document.getElementById('outraEspecialidade');
+      
+      // Mostrar/esconder campo "Outra especialidade" conforme seleção
+      especialidadeSelect.addEventListener('change', () => {
+        if (especialidadeSelect.value === 'outro') {
+          outraEspecialidadeField.parentElement.style.display = 'block';
+        } else {
+          outraEspecialidadeField.parentElement.style.display = 'none';
+        }
+      });
+      
+      // Esconder campo "Outra especialidade" inicialmente
+      outraEspecialidadeField.parentElement.style.display = 'none';
+      
+      // Carregar dados do paciente da etapa 1
+      carregarDadosPaciente();
+      
+      // Inicializar a data de solicitação com a data atual
+      document.getElementById('dataEmissao').valueAsDate = new Date();
+      
+      // Handler para voltar
+      btnVoltar.addEventListener('click', () => {
+        window.location.href = '../etapa1.html';
+      });
+      
+      // Handler para salvar rascunho
+      btnSalvarRascunho.addEventListener('click', () => {
+        const formData = new FormData(form);
+        const dados = Object.fromEntries(formData.entries());
+        
+        // Salvar formulário como rascunho
+        salvarFormulario('especialidades', dados);
+        mostrarNotificacao('Rascunho salvo com sucesso!', 'sucesso');
+      });
+      
+      // Handler para enviar solicitação
+      btnEnviar.addEventListener('click', () => {
+        // Validar formulário
+        const resultadoValidacao = validarFormulario(form);
+        
+        if (resultadoValidacao.valido) {
+          const formData = new FormData(form);
+          const dados = Object.fromEntries(formData.entries());
+          
+          // Salvar formulário como enviado
+          const idSolicitacao = salvarFormulario('especialidades', dados);
+          
+          // Em produção: enviar para API
+          // Simulação de envio bem-sucedido
+          setTimeout(() => {
+            // Mostrar confirmação
+            mostrarNotificacao('Solicitação enviada com sucesso! Protocolo: ' + idSolicitacao, 'sucesso');
+            
+            // Redirecionar para página de acompanhamento (em uma implementação real)
+            setTimeout(() => {
+              window.location.href = '../index.html';
+            }, 1500);
+          }, 1000);
+        } else {
+          mensagemValidacao.style.display = 'block';
+          // Rolar até a mensagem de validação
+          mensagemValidacao.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+      
+      // Função para carregar dados do paciente salvos na etapa 1
+      function carregarDadosPaciente() {
+        const dadosPaciente = obterDadosEtapa1();
+        
+        // Se não tiver dados do paciente, redirecionar para etapa 1
+        if (!dadosPaciente || Object.keys(dadosPaciente).length === 0) {
+          mostrarNotificacao('Dados do paciente não encontrados. Por favor, preencha a etapa 1.', 'erro');
+          setTimeout(() => {
+            window.location.href = '../etapa1.html';
+          }, 1500);
+          return;
+        }
+        
+        // Preencher o resumo do paciente
+        document.getElementById('resumoNomePaciente').textContent = dadosPaciente.nomePaciente || '-';
+        
+        // Formatar a data de nascimento
+        let dataNascimentoFormatada = '-';
+        if (dadosPaciente.dataNascimento) {
+          dataNascimentoFormatada = formatarData(dadosPaciente.dataNascimento);
+        }
+        document.getElementById('resumoDataNascimento').textContent = dataNascimentoFormatada;
+        
+        document.getElementById('resumoCnsPaciente').textContent = dadosPaciente.cnsPaciente || '-';
+        document.getElementById('resumoNomeUnidade').textContent = dadosPaciente.nomeUnidade || '-';
+      }
+    });
+  </script>
+</body>
+</html> 

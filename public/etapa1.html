@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UBS Local - Etapa 1: Dados Comuns</title>
+  <link rel="stylesheet" href="styles/variables.css">
+  <link rel="stylesheet" href="styles/global.css">
+  <link rel="stylesheet" href="styles/forms.css">
+  <style>
+    .botoes-navegacao {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    #seletorProcedimento {
+      padding: 0.8rem;
+      border-radius: var(--borda-arredondada);
+      border: 1px solid var(--cor-borda);
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    
+    #mensagemValidacao {
+      color: var(--cor-erro);
+      display: none;
+      margin: 1rem 0;
+      padding: 0.75rem;
+      background-color: rgba(231, 76, 60, 0.1);
+      border-radius: var(--borda-arredondada);
+      border-left: 4px solid var(--cor-erro);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="cabecalho">
+      <h1>UBS Local</h1>
+      <p>Sistema de Regulação Municipal</p>
+    </header>
+    
+    <main>
+      <section class="card">
+        <h2>Etapa 1: Dados do Paciente e Unidade</h2>
+        <p>Preencha os dados básicos do paciente e da unidade de saúde para prosseguir.</p>
+        
+        <form id="formEtapa1">
+          <div class="secao-form">
+            <h3>Dados da Unidade de Saúde</h3>
+            
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="nomeUnidade" class="obrigatorio">Nome da Unidade</label>
+                <input type="text" id="nomeUnidade" name="nomeUnidade" required>
+              </div>
+              
+              <div class="campo">
+                <label for="cnesUnidade" class="obrigatorio">CNES</label>
+                <input type="text" id="cnesUnidade" name="cnesUnidade" 
+                      required pattern="\d{7}" maxlength="7">
+              </div>
+            </div>
+            
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="enderecoUnidade">Endereço</label>
+                <input type="text" id="enderecoUnidade" name="enderecoUnidade">
+              </div>
+              
+              <div class="campo">
+                <label for="telefoneUnidade">Telefone</label>
+                <input type="tel" id="telefoneUnidade" name="telefoneUnidade">
+              </div>
+            </div>
+          </div>
+          
+          <div class="secao-form">
+            <h3>Dados do Paciente</h3>
+            
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="nomePaciente" class="obrigatorio">Nome Completo</label>
+                <input type="text" id="nomePaciente" name="nomePaciente" required>
+              </div>
+            </div>
+            
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="dataNascimento" class="obrigatorio">Data de Nascimento</label>
+                <input type="date" id="dataNascimento" name="dataNascimento" required>
+              </div>
+              
+              <div class="campo">
+                <label for="cpfPaciente">CPF</label>
+                <input type="text" id="cpfPaciente" name="cpfPaciente" 
+                      pattern="\d{3}\.\d{3}\.\d{3}-\d{2}|\d{11}">
+              </div>
+              
+              <div class="campo">
+                <label for="cnsPaciente" class="obrigatorio">CNS</label>
+                <input type="text" id="cnsPaciente" name="cnsPaciente" 
+                      required pattern="\d{15}" maxlength="15">
+              </div>
+            </div>
+            
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="enderecoPaciente" class="obrigatorio">Endereço</label>
+                <input type="text" id="enderecoPaciente" name="enderecoPaciente" required>
+              </div>
+              
+              <div class="campo">
+                <label for="telefonePaciente">Telefone</label>
+                <input type="tel" id="telefonePaciente" name="telefonePaciente">
+              </div>
+            </div>
+          </div>
+          
+          <div class="secao-form">
+            <h3>Tipo de Procedimento</h3>
+            <div class="campo">
+              <label for="seletorProcedimento" class="obrigatorio">Selecione o procedimento</label>
+              <select id="seletorProcedimento" name="tipoProcedimento" required>
+                <option value="">Selecione...</option>
+                <option value="ressonancia">Ressonância Magnética</option>
+                <option value="mamografia">Mamografia</option>
+                <option value="lme">LME - Laudo para Medicação Especializada</option>
+                <option value="aih">AIH - Autorização para Internação Hospitalar</option>
+                <option value="ambulatorial">Procedimento Ambulatorial</option>
+                <option value="especialidades">Consulta de Especialidade</option>
+              </select>
+            </div>
+          </div>
+          
+          <div id="mensagemValidacao">
+            Por favor, preencha todos os campos obrigatórios antes de prosseguir.
+          </div>
+          
+          <div class="botoes-navegacao">
+            <button type="button" class="btn secundario" id="btnSalvarRascunho">Salvar Rascunho</button>
+            <button type="button" class="btn primario" id="btnProsseguir">Prosseguir</button>
+          </div>
+        </form>
+      </section>
+    </main>
+    
+    <footer>
+      <p>&copy; 2023 UBS Local - Sistema de Regulação Municipal</p>
+    </footer>
+  </div>
+  
+  <script type="module">
+    import { salvarDadosEtapa1 } from './scripts/storage.js';
+    import { validarFormulario } from './scripts/validacoes.js';
+    import { mostrarNotificacao } from './scripts/utils.js';
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('formEtapa1');
+      const btnProsseguir = document.getElementById('btnProsseguir');
+      const btnSalvarRascunho = document.getElementById('btnSalvarRascunho');
+      const mensagemValidacao = document.getElementById('mensagemValidacao');
+      const seletorProcedimento = document.getElementById('seletorProcedimento');
+      
+      // Carregar dados salvos no localStorage (se existirem)
+      carregarDadosSalvos();
+      
+      // Handler para o botão Prosseguir
+      btnProsseguir.addEventListener('click', () => {
+        // Validar formulário
+        const resultadoValidacao = validarFormulario(form);
+        
+        if (resultadoValidacao.valido) {
+          // Salvar dados
+          const formData = new FormData(form);
+          const dados = Object.fromEntries(formData.entries());
+          
+          salvarDadosEtapa1(dados);
+          
+          // Redirecionar para o formulário específico
+          const tipoProcedimento = seletorProcedimento.value;
+          if (tipoProcedimento) {
+            window.location.href = `forms/${tipoProcedimento}.html`;
+          } else {
+            mensagemValidacao.textContent = 'Selecione um tipo de procedimento para prosseguir.';
+            mensagemValidacao.style.display = 'block';
+          }
+        } else {
+          mensagemValidacao.style.display = 'block';
+        }
+      });
+      
+      // Handler para salvar rascunho
+      btnSalvarRascunho.addEventListener('click', () => {
+        const formData = new FormData(form);
+        const dados = Object.fromEntries(formData.entries());
+        
+        salvarDadosEtapa1(dados);
+        mostrarNotificacao('Rascunho salvo com sucesso!', 'sucesso');
+      });
+      
+      // Função para carregar dados salvos
+      function carregarDadosSalvos() {
+        try {
+          const dadosSalvos = localStorage.getItem('ubs_dados_etapa1');
+          if (dadosSalvos) {
+            const dados = JSON.parse(dadosSalvos);
+            
+            // Preencher campos com dados salvos
+            Object.keys(dados).forEach(key => {
+              if (key !== '_timestamp' && key !== '_ultimaAtualizacao') {
+                const campo = document.querySelector(`[name="${key}"]`);
+                if (campo) {
+                  campo.value = dados[key];
+                }
+              }
+            });
+            
+            // Se há dados salvos e tipo de procedimento, mostrar mensagem
+            if (dados.tipoProcedimento) {
+              mostrarNotificacao('Dados carregados do rascunho anterior', 'informacao');
+            }
+          }
+        } catch (erro) {
+          console.error('Erro ao carregar dados salvos:', erro);
+        }
+      }
+    });
+  </script>
+</body>
+</html> 

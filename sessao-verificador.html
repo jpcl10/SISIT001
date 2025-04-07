@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verificador de Sessão</title>
+  <script src="debug-session.js"></script>
+  <style>
+    :root {
+      --cor-primaria: #006ba6;
+      --cor-secundaria: #0093d0;
+      --cor-terciaria: #74c5e8;
+      --cor-fundo: #f5f7fa;
+      --cor-texto: #333;
+      --cor-borda: #ddd;
+      --cor-erro: #dc3545;
+      --cor-sucesso: #28a745;
+      --cor-aviso: #ffc107;
+      --fonte-principal: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      --sombra-padrao: 0 2px 5px rgba(0, 0, 0, 0.15);
+      --borda-raio: 4px;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: var(--fonte-principal);
+      background-color: var(--cor-fundo);
+      color: var(--cor-texto);
+      line-height: 1.6;
+      padding: 2rem;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: var(--sombra-padrao);
+    }
+    
+    h1 {
+      color: var(--cor-primaria);
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    
+    .card {
+      border: 1px solid var(--cor-borda);
+      border-radius: var(--borda-raio);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .status-box {
+      padding: 1rem;
+      border-radius: var(--borda-raio);
+      margin-top: 1rem;
+    }
+    
+    .success {
+      background-color: rgba(40, 167, 69, 0.1);
+      border: 1px solid var(--cor-sucesso);
+      color: var(--cor-sucesso);
+    }
+    
+    .error {
+      background-color: rgba(220, 53, 69, 0.1);
+      border: 1px solid var(--cor-erro);
+      color: var(--cor-erro);
+    }
+    
+    .warning {
+      background-color: rgba(255, 193, 7, 0.1);
+      border: 1px solid var(--cor-aviso);
+      color: #856404;
+    }
+    
+    pre {
+      background: #f8f9fa;
+      padding: 0.5rem;
+      border-radius: var(--borda-raio);
+      overflow: auto;
+      white-space: pre-wrap;
+      max-height: 200px;
+    }
+    
+    button {
+      background-color: var(--cor-primaria);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: var(--borda-raio);
+      cursor: pointer;
+      font-size: 1rem;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    button:hover {
+      background-color: var(--cor-secundaria);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Verificador de Sessão</h1>
+    
+    <div class="card">
+      <h2>Status do SessionStorage</h2>
+      <div id="storage-status"></div>
+    </div>
+    
+    <div class="card">
+      <h2>Dados do Usuário</h2>
+      <div id="user-data"></div>
+      <pre id="user-json"></pre>
+    </div>
+    
+    <div class="card">
+      <h2>Diagnóstico</h2>
+      <div id="diagnostico"></div>
+    </div>
+    
+    <div class="card">
+      <h2>Ações</h2>
+      <button id="btn-clear-session">Limpar Sessão</button>
+      <button id="btn-set-test-user">Definir Usuário de Teste</button>
+      <button id="btn-login-page">Ir para Login</button>
+      <button id="btn-ubs-page">Ir para UBS</button>
+      <button id="btn-central-page">Ir para Central</button>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Verificar status do sessionStorage
+      const storageStatus = document.getElementById('storage-status');
+      try {
+        sessionStorage.setItem('teste', 'ok');
+        sessionStorage.removeItem('teste');
+        storageStatus.innerHTML = '<div class="status-box success">✅ O sessionStorage está funcionando corretamente</div>';
+      } catch (e) {
+        storageStatus.innerHTML = `<div class="status-box error">❌ Problema com sessionStorage: ${e.message}</div>`;
+      }
+      
+      // Verificar dados do usuário
+      const userData = document.getElementById('user-data');
+      const userJson = document.getElementById('user-json');
+      const usuarioStr = sessionStorage.getItem('usuarioAtual');
+      
+      if (usuarioStr) {
+        try {
+          const usuario = JSON.parse(usuarioStr);
+          userData.innerHTML = `
+            <div class="status-box success">
+              <p><strong>Nome:</strong> ${usuario.nome}</p>
+              <p><strong>Perfil:</strong> ${usuario.perfil}</p>
+              <p><strong>Unidade:</strong> ${usuario.unidade}</p>
+            </div>
+          `;
+          userJson.textContent = JSON.stringify(usuario, null, 2);
+        } catch (e) {
+          userData.innerHTML = `<div class="status-box error">❌ Erro ao processar dados do usuário: ${e.message}</div>`;
+          userJson.textContent = usuarioStr;
+        }
+      } else {
+        userData.innerHTML = '<div class="status-box warning">⚠️ Nenhum usuário logado na sessão</div>';
+      }
+      
+      // Diagnóstico geral
+      const diagnostico = document.getElementById('diagnostico');
+      const problemas = [];
+      
+      // Verificar problemas comuns
+      if (!usuarioStr) {
+        problemas.push('Sessão de usuário não encontrada');
+      }
+      
+      const path = window.location.pathname;
+      const paginaAtual = path.split('/').pop();
+      
+      if (usuarioStr) {
+        try {
+          const usuario = JSON.parse(usuarioStr);
+          const perfisUBS = ['ubs', 'medico', 'atendente'];
+          
+          if (paginaAtual === 'sistema-ubs.html' && !perfisUBS.includes(usuario.perfil) && usuario.perfil !== 'admin') {
+            problemas.push('Usuário não tem perfil para acessar página UBS');
+          }
+          
+          if (paginaAtual === 'sistema-central-regulacao.html' && perfisUBS.includes(usuario.perfil)) {
+            problemas.push('Usuário UBS tentando acessar Central de Regulação');
+          }
+          
+          // Verificar integridade do objeto de usuário
+          if (!usuario.nome || !usuario.perfil || !usuario.unidade) {
+            problemas.push('Objeto de usuário incompleto ou malformado');
+          }
+        } catch (e) {
+          problemas.push(`Erro ao processar JSON do usuário: ${e.message}`);
+        }
+      }
+      
+      if (problemas.length === 0) {
+        diagnostico.innerHTML = '<div class="status-box success">✅ Nenhum problema detectado</div>';
+      } else {
+        let html = '<div class="status-box error"><h3>Problemas Detectados:</h3><ul>';
+        problemas.forEach(problema => {
+          html += `<li>${problema}</li>`;
+        });
+        html += '</ul></div>';
+        diagnostico.innerHTML = html;
+      }
+      
+      // Botões de ação
+      document.getElementById('btn-clear-session').addEventListener('click', function() {
+        sessionStorage.clear();
+        alert('Sessão limpa com sucesso!');
+        location.reload();
+      });
+      
+      document.getElementById('btn-set-test-user').addEventListener('click', function() {
+        const perfilSelect = prompt('Selecione o perfil do usuário de teste:\n1. UBS\n2. Médico\n3. Atendente\n4. Regulador\n5. Admin\n6. Gestor', '1');
+        
+        let perfil, nome, unidade;
+        
+        switch (perfilSelect) {
+          case '1':
+            perfil = 'ubs';
+            nome = 'Teste UBS';
+            unidade = 'UBS Central';
+            break;
+          case '2':
+            perfil = 'medico';
+            nome = 'Teste Médico';
+            unidade = 'UBS Norte';
+            break;
+          case '3':
+            perfil = 'atendente';
+            nome = 'Teste Atendente';
+            unidade = 'UBS Sul';
+            break;
+          case '4':
+            perfil = 'regulador';
+            nome = 'Teste Regulador';
+            unidade = 'Central de Regulação';
+            break;
+          case '5':
+            perfil = 'admin';
+            nome = 'Teste Admin';
+            unidade = 'Central de Regulação';
+            break;
+          case '6':
+            perfil = 'gestor';
+            nome = 'Teste Gestor';
+            unidade = 'Secretaria de Saúde';
+            break;
+          default:
+            alert('Opção inválida');
+            return;
+        }
+        
+        const permissoes = perfil === 'admin' ? ['*'] : ['criar_solicitacao', 'visualizar_solicitacoes'];
+        
+        const usuario = {
+          nome,
+          perfil,
+          unidade,
+          permissoes
+        };
+        
+        sessionStorage.setItem('usuarioAtual', JSON.stringify(usuario));
+        alert(`Usuário de teste definido: ${nome} (${perfil})`);
+        location.reload();
+      });
+      
+      document.getElementById('btn-login-page').addEventListener('click', function() {
+        window.location.href = 'login-central-regulacao.html';
+      });
+      
+      document.getElementById('btn-ubs-page').addEventListener('click', function() {
+        window.location.href = 'sistema-ubs.html';
+      });
+      
+      document.getElementById('btn-central-page').addEventListener('click', function() {
+        window.location.href = 'sistema-central-regulacao.html';
+      });
+    });
+  </script>
+</body>
+</html> 

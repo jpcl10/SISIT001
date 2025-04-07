@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema UBS - Painel Local</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <h1>Sistema Local UBS</h1>
+    <div class="user-info">
+      <span id="user-name">Dr. Silva</span>
+      <button id="logout-btn">Sair</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="dashboard">
+      <div class="dashboard-card" id="solicitacoes-dia">
+        <h3>Solicitações Hoje</h3>
+        <p class="card-value">12</p>
+      </div>
+      <div class="dashboard-card" id="cotas-procedimento">
+        <h3>Cotas Disponíveis</h3>
+        <p class="card-value">32</p>
+      </div>
+      <div class="dashboard-card" id="alertas-central">
+        <h3>Alertas</h3>
+        <p class="card-value">3</p>
+      </div>
+      <div class="dashboard-card" id="notificacoes">
+        <h3>Notificações</h3>
+        <p class="card-value">5</p>
+      </div>
+    </section>
+
+    <section class="formulario-solicitacao">
+      <h2>Nova Solicitação</h2>
+      <div class="campo-selecao">
+        <label for="seletorFormulario">Tipo de solicitação:</label>
+        <select id="seletorFormulario" onchange="mostrarFormularioEspecifico()">
+          <option value="">Selecione um procedimento</option>
+          <option value="ressonancia">Ressonância/Tomografia</option>
+          <option value="mamografia">Mamografia</option>
+          <option value="lme">Medicamento Especial (LME)</option>
+          <option value="aih">Internação (AIH)</option>
+          <option value="ambulatorial">Procedimento Ambulatorial</option>
+          <option value="especialidades">Especialidade</option>
+        </select>
+      </div>
+
+      <!-- Área dos formulários específicos -->
+      <div id="formularioEspecifico" style="display: none;">
+        <!-- Formulário: Ressonância/Tomografia -->
+        <form id="formRessonancia" style="display: none;" class="formulario-especializado">
+          <h3>Solicitação de Ressonância/Tomografia</h3>
+          
+          <div class="form-section">
+            <h4>1. Dados do Paciente</h4>
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="res-paciente-nome" class="required">Nome do Paciente</label>
+                <input type="text" id="res-paciente-nome" required>
+              </div>
+              <div class="campo">
+                <label for="res-paciente-cns" class="required">CNS</label>
+                <input type="text" id="res-paciente-cns" required pattern="\d{15}" maxlength="15">
+              </div>
+              <div class="campo">
+                <label for="res-paciente-idade" class="required">Idade</label>
+                <input type="number" id="res-paciente-idade" required min="0" max="120">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h4>2. Exame Solicitado</h4>
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="res-tipo-exame" class="required">Tipo de Exame</label>
+                <select id="res-tipo-exame" required>
+                  <option value="">Selecione...</option>
+                  <option value="rm-cerebro">RM - Cérebro</option>
+                  <option value="rm-coluna">RM - Coluna</option>
+                  <option value="tc-cranio">TC - Crânio</option>
+                  <option value="tc-abdomen">TC - Abdômen</option>
+                </select>
+              </div>
+              <div class="campo">
+                <label for="res-prioridade" class="required">Prioridade</label>
+                <select id="res-prioridade" required>
+                  <option value="">Selecione...</option>
+                  <option value="1">Urgente (15 dias)</option>
+                  <option value="2">Alta (30 dias)</option>
+                  <option value="3">Média (60 dias)</option>
+                  <option value="4">Baixa (90+ dias)</option>
+                </select>
+              </div>
+            </div>
+            <div class="campo">
+              <label for="res-justificativa" class="required">Justificativa Clínica</label>
+              <textarea id="res-justificativa" rows="4" required placeholder="Descreva a justificativa clínica para o exame..."></textarea>
+            </div>
+          </div>
+
+          <div class="form-buttons">
+            <button type="submit" class="btn-primary">Enviar Solicitação</button>
+            <button type="button" class="btn-secondary">Salvar Rascunho</button>
+          </div>
+        </form>
+
+        <!-- Formulário: Mamografia -->
+        <form id="formMamografia" style="display: none;" class="formulario-especializado">
+          <h3>Solicitação de Mamografia</h3>
+
+          <div class="form-section">
+            <h4>1. Dados da Paciente</h4>
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="mamo-paciente-nome" class="required">Nome da Paciente</label>
+                <input type="text" id="mamo-paciente-nome" required>
+              </div>
+              <div class="campo">
+                <label for="mamo-paciente-cns" class="required">CNS</label>
+                <input type="text" id="mamo-paciente-cns" required pattern="\d{15}" maxlength="15">
+              </div>
+              <div class="campo">
+                <label for="mamo-paciente-idade" class="required">Idade</label>
+                <input type="number" id="mamo-paciente-idade" required min="0" max="120">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h4>2. Detalhes do Exame</h4>
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="mamo-tipo" class="required">Tipo de Mamografia</label>
+                <select id="mamo-tipo" required>
+                  <option value="">Selecione...</option>
+                  <option value="rastreamento">Rastreamento</option>
+                  <option value="diagnostico">Diagnóstico</option>
+                </select>
+              </div>
+              <div class="campo">
+                <label for="mamo-ultimo-exame">Data do último exame</label>
+                <input type="date" id="mamo-ultimo-exame">
+              </div>
+            </div>
+            <div class="campo">
+              <label for="mamo-observacoes">Observações Clínicas</label>
+              <textarea id="mamo-observacoes" rows="3" placeholder="Descreva as observações clínicas relevantes..."></textarea>
+            </div>
+          </div>
+
+          <div class="form-buttons">
+            <button type="submit" class="btn-primary">Enviar Solicitação</button>
+            <button type="button" class="btn-secondary">Salvar Rascunho</button>
+          </div>
+        </form>
+
+        <!-- Formulário: LME -->
+        <form id="formLME" style="display: none;" class="formulario-especializado">
+          <h3>Laudo de Medicamento Especializado (LME)</h3>
+
+          <div class="form-section">
+            <h4>1. Dados do Paciente</h4>
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="lme-paciente-nome" class="required">Nome do Paciente</label>
+                <input type="text" id="lme-paciente-nome" required>
+              </div>
+              <div class="campo">
+                <label for="lme-paciente-cns" class="required">CNS</label>
+                <input type="text" id="lme-paciente-cns" required pattern="\d{15}" maxlength="15">
+              </div>
+              <div class="campo">
+                <label for="lme-paciente-idade" class="required">Idade</label>
+                <input type="number" id="lme-paciente-idade" required min="0" max="120">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h4>2. Informações do Medicamento</h4>
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="lme-medicamento" class="required">Medicamento</label>
+                <input type="text" id="lme-medicamento" required list="medicamentos-lista">
+                <datalist id="medicamentos-lista">
+                  <option value="Adalimumabe 40mg">
+                  <option value="Insulina Glargina">
+                  <option value="Etanercepte 50mg">
+                  <option value="Rituximabe 500mg">
+                </datalist>
+              </div>
+              <div class="campo">
+                <label for="lme-cid" class="required">CID-10</label>
+                <input type="text" id="lme-cid" required>
+              </div>
+            </div>
+            <div class="campo">
+              <label for="lme-justificativa" class="required">Justificativa Clínica</label>
+              <textarea id="lme-justificativa" rows="4" required placeholder="Descreva a justificativa clínica para o medicamento..."></textarea>
+            </div>
+          </div>
+
+          <div class="form-buttons">
+            <button type="submit" class="btn-primary">Enviar Solicitação</button>
+            <button type="button" class="btn-secondary">Salvar Rascunho</button>
+          </div>
+        </form>
+
+        <!-- Formulário: AIH -->
+        <form id="formAIH" style="display: none;" class="formulario-especializado">
+          <h3>Solicitação de Internação Hospitalar (AIH)</h3>
+
+          <div class="form-section">
+            <h4>1. Dados do Paciente</h4>
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="aih-paciente-nome" class="required">Nome do Paciente</label>
+                <input type="text" id="aih-paciente-nome" required>
+              </div>
+              <div class="campo">
+                <label for="aih-paciente-cns" class="required">CNS</label>
+                <input type="text" id="aih-paciente-cns" required pattern="\d{15}" maxlength="15">
+              </div>
+              <div class="campo">
+                <label for="aih-paciente-idade" class="required">Idade</label>
+                <input type="number" id="aih-paciente-idade" required min="0" max="120">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h4>2. Dados da Internação</h4>
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="aih-hospital" class="required">Hospital de Preferência</label>
+                <input type="text" id="aih-hospital" required>
+              </div>
+              <div class="campo">
+                <label for="aih-cid" class="required">Diagnóstico Principal (CID)</label>
+                <input type="text" id="aih-cid" required>
+              </div>
+              <div class="campo">
+                <label for="aih-procedimento" class="required">Procedimento Principal</label>
+                <input type="text" id="aih-procedimento" required>
+              </div>
+            </div>
+            <div class="campo">
+              <label for="aih-justificativa" class="required">Justificativa da Internação</label>
+              <textarea id="aih-justificativa" rows="4" required placeholder="Descreva a justificativa clínica para a internação..."></textarea>
+            </div>
+          </div>
+
+          <div class="form-buttons">
+            <button type="submit" class="btn-primary">Enviar Solicitação</button>
+            <button type="button" class="btn-secondary">Salvar Rascunho</button>
+          </div>
+        </form>
+
+        <!-- Formulário: Ambulatorial -->
+        <form id="formAmbulatorial" style="display: none;" class="formulario-especializado">
+          <h3>Solicitação de Procedimento Ambulatorial</h3>
+
+          <div class="form-section">
+            <h4>1. Dados do Paciente</h4>
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="amb-paciente-nome" class="required">Nome do Paciente</label>
+                <input type="text" id="amb-paciente-nome" required>
+              </div>
+              <div class="campo">
+                <label for="amb-paciente-cns" class="required">CNS</label>
+                <input type="text" id="amb-paciente-cns" required pattern="\d{15}" maxlength="15">
+              </div>
+              <div class="campo">
+                <label for="amb-paciente-idade" class="required">Idade</label>
+                <input type="number" id="amb-paciente-idade" required min="0" max="120">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h4>2. Detalhes do Procedimento</h4>
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="amb-procedimento" class="required">Procedimento</label>
+                <select id="amb-procedimento" required>
+                  <option value="">Selecione...</option>
+                  <option value="exame">Exame Laboratorial</option>
+                  <option value="cirurgia">Cirurgia Ambulatorial</option>
+                  <option value="terapia">Terapia Especializada</option>
+                </select>
+              </div>
+              <div class="campo">
+                <label for="amb-cid" class="required">CID-10</label>
+                <input type="text" id="amb-cid" required>
+              </div>
+              <div class="campo">
+                <label for="amb-quantidade" class="required">Quantidade</label>
+                <input type="number" id="amb-quantidade" required min="1" value="1">
+              </div>
+            </div>
+            <div class="campo">
+              <label for="amb-justificativa" class="required">Justificativa</label>
+              <textarea id="amb-justificativa" rows="4" required placeholder="Descreva a justificativa clínica para o procedimento..."></textarea>
+            </div>
+          </div>
+
+          <div class="form-buttons">
+            <button type="submit" class="btn-primary">Enviar Solicitação</button>
+            <button type="button" class="btn-secondary">Salvar Rascunho</button>
+          </div>
+        </form>
+
+        <!-- Formulário: Especialidades -->
+        <form id="formEspecialidades" style="display: none;" class="formulario-especializado">
+          <h3>Encaminhamento para Especialidade</h3>
+
+          <div class="form-section">
+            <h4>1. Dados do Paciente</h4>
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="esp-paciente-nome" class="required">Nome do Paciente</label>
+                <input type="text" id="esp-paciente-nome" required>
+              </div>
+              <div class="campo">
+                <label for="esp-paciente-cns" class="required">CNS</label>
+                <input type="text" id="esp-paciente-cns" required pattern="\d{15}" maxlength="15">
+              </div>
+              <div class="campo">
+                <label for="esp-paciente-idade" class="required">Idade</label>
+                <input type="number" id="esp-paciente-idade" required min="0" max="120">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h4>2. Especialidade e Justificativa</h4>
+            <div class="campo-grupo">
+              <div class="campo">
+                <label for="esp-especialidade" class="required">Especialidade</label>
+                <select id="esp-especialidade" required>
+                  <option value="">Selecione...</option>
+                  <option value="cardiologia">Cardiologia</option>
+                  <option value="neurologia">Neurologia</option>
+                  <option value="endocrinologia">Endocrinologia</option>
+                  <option value="ortopedia">Ortopedia</option>
+                  <option value="oftalmologia">Oftalmologia</option>
+                </select>
+              </div>
+              <div class="campo">
+                <label for="esp-prioridade" class="required">Prioridade</label>
+                <select id="esp-prioridade" required>
+                  <option value="">Selecione...</option>
+                  <option value="1">Urgente (15 dias)</option>
+                  <option value="2">Alta (30 dias)</option>
+                  <option value="3">Média (60 dias)</option>
+                  <option value="4">Baixa (90+ dias)</option>
+                </select>
+              </div>
+              <div class="campo">
+                <label for="esp-cid" class="required">CID-10</label>
+                <input type="text" id="esp-cid" required>
+              </div>
+            </div>
+            <div class="campo">
+              <label for="esp-justificativa" class="required">Justificativa Clínica</label>
+              <textarea id="esp-justificativa" rows="4" required placeholder="Descreva a justificativa clínica para o encaminhamento..."></textarea>
+            </div>
+          </div>
+
+          <div class="form-buttons">
+            <button type="submit" class="btn-primary">Enviar Solicitação</button>
+            <button type="button" class="btn-secondary">Salvar Rascunho</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="modulo-solicitacoes">
+      <h2>Solicitações Enviadas</h2>
+      <div class="filtros">
+        <input type="text" placeholder="Buscar por protocolo..." />
+        <select>
+          <option value="">Status</option>
+          <option value="pendente">Pendente</option>
+          <option value="aprovado">Aprovado</option>
+          <option value="rejeitado">Rejeitado</option>
+        </select>
+        <select>
+          <option value="">Período</option>
+          <option value="7">Últimos 7 dias</option>
+          <option value="30">Últimos 30 dias</option>
+          <option value="90">Últimos 90 dias</option>
+        </select>
+      </div>
+      <table id="tabela-solicitacoes">
+        <thead>
+          <tr>
+            <th>Protocolo</th>
+            <th>Paciente</th>
+            <th>Tipo</th>
+            <th>Data</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SOL-2023-001</td>
+            <td>Maria da Silva</td>
+            <td>Mamografia</td>
+            <td>12/04/2023</td>
+            <td class="status-pendente">Pendente</td>
+            <td>
+              <button class="btn-acao">Visualizar</button>
+            </td>
+          </tr>
+          <tr>
+            <td>SOL-2023-002</td>
+            <td>João Pereira</td>
+            <td>Especialidade</td>
+            <td>15/04/2023</td>
+            <td class="status-aprovado">Aprovado</td>
+            <td>
+              <button class="btn-acao">Visualizar</button>
+            </td>
+          </tr>
+          <tr>
+            <td>SOL-2023-003</td>
+            <td>Ana Souza</td>
+            <td>Ressonância</td>
+            <td>18/04/2023</td>
+            <td class="status-rejeitado">Rejeitado</td>
+            <td>
+              <button class="btn-acao">Visualizar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="modulo-devolvidas">
+      <h2>Solicitações Devolvidas</h2>
+      <div id="lista-devolvidas" class="lista-cards">
+        <div class="card-item">
+          <div class="card-header">
+            <span class="card-titulo">SOL-2023-004</span>
+            <span class="card-data">20/04/2023</span>
+          </div>
+          <div class="card-conteudo">
+            <p><strong>Paciente:</strong> Carlos Oliveira</p>
+            <p><strong>Tipo:</strong> AIH</p>
+            <p><strong>Motivo:</strong> Falta documentação complementar</p>
+          </div>
+          <div class="card-acoes">
+            <button class="btn-acao">Corrigir</button>
+            <button class="btn-acao">Cancelar</button>
+          </div>
+        </div>
+        <div class="card-item">
+          <div class="card-header">
+            <span class="card-titulo">SOL-2023-005</span>
+            <span class="card-data">22/04/2023</span>
+          </div>
+          <div class="card-conteudo">
+            <p><strong>Paciente:</strong> Lúcia Ferreira</p>
+            <p><strong>Tipo:</strong> LME</p>
+            <p><strong>Motivo:</strong> Justificativa insuficiente</p>
+          </div>
+          <div class="card-acoes">
+            <button class="btn-acao">Corrigir</button>
+            <button class="btn-acao">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="modulo-cotas">
+      <h2>Cotas Disponíveis</h2>
+      <div id="tabela-cotas" class="tabela-responsiva">
+        <table>
+          <thead>
+            <tr>
+              <th>Procedimento</th>
+              <th>Total Mensal</th>
+              <th>Utilizadas</th>
+              <th>Disponíveis</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Mamografia</td>
+              <td>30</td>
+              <td>12</td>
+              <td>18</td>
+            </tr>
+            <tr>
+              <td>Ressonância Magnética</td>
+              <td>10</td>
+              <td>8</td>
+              <td>2</td>
+            </tr>
+            <tr>
+              <td>Consulta Cardiologia</td>
+              <td>15</td>
+              <td>5</td>
+              <td>10</td>
+            </tr>
+            <tr>
+              <td>Consulta Neurologia</td>
+              <td>8</td>
+              <td>7</td>
+              <td>1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2023 Sistema UBS Local - Itambacuri</p>
+  </footer>
+
+  <script src="ubs-scripts.js"></script>
+</body>
+</html> 

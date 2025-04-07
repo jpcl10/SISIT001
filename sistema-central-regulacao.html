@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Central de Regulação - Sistema UBS</title>
+  <!-- Preload do CSS para prevenir layout forçado -->
+  <link rel="preload" href="style-central.css" as="style" />
+  <link rel="stylesheet" href="style-central.css" />
+  <!-- Usar uma versão específica do Chart.js para evitar problemas -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="logo-container">
+      <!-- Logo substituído por texto com estilo de logo -->
+      <div class="text-logo">SUS<span>Digital</span></div>
+      <h1>Central de Regulação Municipal</h1>
+    </div>
+    <div class="user-info">
+      <span id="user-role">Médico Regulador</span>
+      <span id="user-name">Dr. Carlos Santos</span>
+      <div class="dropdown">
+        <button class="dropdown-btn">Menu</button>
+        <div class="dropdown-content">
+          <a href="#perfil">Meu Perfil</a>
+          <a href="#ajuda">Ajuda</a>
+          <a href="#" id="logout-link">Sair</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Menu Lateral -->
+    <nav class="sidebar">
+      <ul class="menu-principal">
+        <li class="menu-item active" data-role="all">
+          <a href="#dashboard"><span class="icon">📊</span> Dashboard</a>
+        </li>
+        <li class="menu-item" data-role="operator regulator">
+          <a href="#fila"><span class="icon">📋</span> Fila de Solicitações</a>
+        </li>
+        <li class="menu-item" data-role="operator regulator">
+          <a href="#cotas"><span class="icon">📈</span> Cotas em Tempo Real</a>
+        </li>
+        <li class="menu-item" data-role="operator regulator">
+          <a href="#historico"><span class="icon">📝</span> Histórico de Ações</a>
+        </li>
+        <!-- Itens visíveis apenas para Admin -->
+        <li class="menu-item admin-only" data-role="admin">
+          <a href="#procedimentos"><span class="icon">🔧</span> Gerenciamento de Procedimentos</a>
+        </li>
+        <li class="menu-item admin-only" data-role="admin">
+          <a href="#usuarios"><span class="icon">👥</span> Usuários e Permissões</a>
+        </li>
+        <li class="menu-item admin-only" data-role="admin">
+          <a href="#logs"><span class="icon">🔍</span> Logs e Auditoria</a>
+        </li>
+        <li class="menu-item admin-only" data-role="admin">
+          <a href="#alertas"><span class="icon">🔔</span> Configurações de Alertas</a>
+        </li>
+        <li class="menu-item admin-only" data-role="admin">
+          <a href="#relatorios"><span class="icon">📊</span> Relatórios e Exportações</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main class="content">
+      <!-- Filtros Globais -->
+      <section class="filtros-globais">
+        <div class="filtro-grupo">
+          <label for="periodo">Período:</label>
+          <select id="periodo">
+            <option value="hoje">Hoje</option>
+            <option value="semana" selected>Últimos 7 dias</option>
+            <option value="mes">Últimos 30 dias</option>
+            <option value="trimestre">Últimos 90 dias</option>
+          </select>
+        </div>
+        <div class="filtro-grupo">
+          <label for="unidade">Unidade:</label>
+          <select id="unidade">
+            <option value="todas" selected>Todas as UBS</option>
+            <option value="ubs1">UBS Central</option>
+            <option value="ubs2">UBS Norte</option>
+            <option value="ubs3">UBS Sul</option>
+          </select>
+        </div>
+        <button class="btn-atualizar">Atualizar Dados</button>
+      </section>
+
+      <!-- Dashboard -->
+      <section id="dashboard-section" class="section-container">
+        <h2>Dashboard Unificado</h2>
+        <p class="ultima-atualizacao">Última atualização: <span id="timestamp">10/05/2023 14:32</span></p>
+        
+        <div class="dashboard-cards">
+          <!-- Cards com métricas principais -->
+          <div class="card-metrica total">
+            <h3>Total de Solicitações</h3>
+            <p class="valor-metrica">387</p>
+            <p class="tendencia positiva">↑ 12% vs período anterior</p>
+          </div>
+          <div class="card-metrica pendentes">
+            <h3>Solicitações Pendentes</h3>
+            <p class="valor-metrica">128</p>
+            <p class="tendencia negativa">↑ 8% vs período anterior</p>
+          </div>
+          <div class="card-metrica urgentes">
+            <h3>Urgências Pendentes</h3>
+            <p class="valor-metrica">23</p>
+            <p class="status-critico">Crítico</p>
+          </div>
+          <div class="card-metrica tempo">
+            <h3>Tempo Médio de Análise</h3>
+            <p class="valor-metrica">2,4 dias</p>
+            <p class="tendencia positiva">↓ 15% vs período anterior</p>
+          </div>
+        </div>
+
+        <div class="dashboard-graficos">
+          <!-- Gráficos do Dashboard -->
+          <div class="grafico-container">
+            <h3>Status das Solicitações</h3>
+            <div class="grafico">
+              <canvas id="statusChart"></canvas>
+            </div>
+          </div>
+          <div class="grafico-container">
+            <h3>Solicitações por Tipo</h3>
+            <div class="grafico">
+              <canvas id="tiposChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-tabelas">
+          <div class="tabela-container">
+            <h3>Cotas Críticas</h3>
+            <table class="tabela-cotas">
+              <thead>
+                <tr>
+                  <th>Procedimento</th>
+                  <th>Disponível</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Ressonância Magnética</td>
+                  <td>2</td>
+                  <td>20</td>
+                  <td><span class="status-critico">Crítico</span></td>
+                </tr>
+                <tr>
+                  <td>Consulta Neurologia</td>
+                  <td>5</td>
+                  <td>30</td>
+                  <td><span class="status-atencao">Atenção</span></td>
+                </tr>
+                <tr>
+                  <td>Mamografia</td>
+                  <td>12</td>
+                  <td>50</td>
+                  <td><span class="status-normal">Normal</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="tabela-container">
+            <h3>Atividades Recentes</h3>
+            <div class="lista-atividades">
+              <div class="atividade">
+                <span class="tempo">14:25</span>
+                <span class="acao aprovada">Aprovada</span>
+                <span class="descricao">Solicitação #5423 - Ressonância Magnética</span>
+              </div>
+              <div class="atividade">
+                <span class="tempo">13:58</span>
+                <span class="acao devolvida">Devolvida</span>
+                <span class="descricao">Solicitação #5421 - Consulta Cardiologia</span>
+              </div>
+              <div class="atividade">
+                <span class="tempo">13:45</span>
+                <span class="acao negada">Negada</span>
+                <span class="descricao">Solicitação #5420 - Medicamento Especial</span>
+              </div>
+              <div class="atividade">
+                <span class="tempo">13:30</span>
+                <span class="acao aprovada">Aprovada</span>
+                <span class="descricao">Solicitação #5419 - Mamografia</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Fila de Solicitações (visível inicialmente como oculta) -->
+      <section id="fila-section" class="section-container hidden">
+        <h2>Fila de Solicitações</h2>
+        
+        <div class="filtros-avancados">
+          <div class="filtro-grupo">
+            <label for="status-filtro">Status:</label>
+            <select id="status-filtro">
+              <option value="todos" selected>Todos</option>
+              <option value="pendente">Pendentes</option>
+              <option value="aprovado">Aprovados</option>
+              <option value="negado">Negados</option>
+              <option value="devolvido">Devolvidos</option>
+            </select>
+          </div>
+          <div class="filtro-grupo">
+            <label for="prioridade-filtro">Prioridade:</label>
+            <select id="prioridade-filtro">
+              <option value="todas" selected>Todas</option>
+              <option value="urgente">Urgente</option>
+              <option value="alta">Alta</option>
+              <option value="media">Média</option>
+              <option value="baixa">Baixa</option>
+            </select>
+          </div>
+          <div class="filtro-grupo">
+            <label for="tipo-filtro">Tipo:</label>
+            <select id="tipo-filtro">
+              <option value="todos" selected>Todos</option>
+              <option value="exame">Exames</option>
+              <option value="consulta">Consultas</option>
+              <option value="procedimento">Procedimentos</option>
+              <option value="medicamento">Medicamentos</option>
+            </select>
+          </div>
+          <div class="filtro-grupo busca">
+            <input type="text" id="busca-protocolo" placeholder="Buscar por protocolo ou paciente...">
+            <button class="btn-buscar">Buscar</button>
+          </div>
+        </div>
+        
+        <div class="tabela-fila-container">
+          <table id="tabela-fila" class="tabela-fila">
+            <thead>
+              <tr>
+                <th>Protocolo</th>
+                <th>Paciente</th>
+                <th>Tipo</th>
+                <th>Prioridade</th>
+                <th>Unidade</th>
+                <th>Data</th>
+                <th>Tempo de Espera</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="prioridade-urgente">
+                <td>SOL-2023-5423</td>
+                <td>Maria Oliveira</td>
+                <td>Ressonância</td>
+                <td>Urgente</td>
+                <td>UBS Central</td>
+                <td>10/05/2023</td>
+                <td>2h 15min</td>
+                <td class="acoes">
+                  <button class="btn-acao visualizar">👁️</button>
+                  <button class="btn-acao aprovar">✓</button>
+                  <button class="btn-acao devolver">⟲</button>
+                  <button class="btn-acao negar">✕</button>
+                </td>
+              </tr>
+              <tr class="prioridade-alta">
+                <td>SOL-2023-5422</td>
+                <td>João Santos</td>
+                <td>Tomografia</td>
+                <td>Alta</td>
+                <td>UBS Norte</td>
+                <td>10/05/2023</td>
+                <td>4h 30min</td>
+                <td class="acoes">
+                  <button class="btn-acao visualizar">👁️</button>
+                  <button class="btn-acao aprovar">✓</button>
+                  <button class="btn-acao devolver">⟲</button>
+                  <button class="btn-acao negar">✕</button>
+                </td>
+              </tr>
+              <tr class="prioridade-media">
+                <td>SOL-2023-5421</td>
+                <td>Ana Silva</td>
+                <td>Consulta Cardiologia</td>
+                <td>Média</td>
+                <td>UBS Sul</td>
+                <td>09/05/2023</td>
+                <td>1d 3h</td>
+                <td class="acoes">
+                  <button class="btn-acao visualizar">👁️</button>
+                  <button class="btn-acao aprovar">✓</button>
+                  <button class="btn-acao devolver">⟲</button>
+                  <button class="btn-acao negar">✕</button>
+                </td>
+              </tr>
+              <tr class="prioridade-baixa">
+                <td>SOL-2023-5420</td>
+                <td>Pedro Ferreira</td>
+                <td>Medicamento Especial</td>
+                <td>Baixa</td>
+                <td>UBS Central</td>
+                <td>08/05/2023</td>
+                <td>2d 5h</td>
+                <td class="acoes">
+                  <button class="btn-acao visualizar">👁️</button>
+                  <button class="btn-acao aprovar">✓</button>
+                  <button class="btn-acao devolver">⟲</button>
+                  <button class="btn-acao negar">✕</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="paginacao">
+          <button class="btn-pagina anterior">Anterior</button>
+          <span class="info-pagina">Página 1 de 8</span>
+          <button class="btn-pagina proxima">Próxima</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal de Detalhes da Solicitação -->
+  <div id="modal-detalhes" class="modal">
+    <div class="modal-conteudo">
+      <div class="modal-cabecalho">
+        <h2>Detalhes da Solicitação <span id="modal-protocolo">SOL-2023-5423</span></h2>
+        <button class="fechar-modal">&times;</button>
+      </div>
+      <div class="modal-corpo">
+        <div class="detalhes-principais">
+          <div class="grupo-info">
+            <h3>Dados do Paciente</h3>
+            <p><strong>Nome:</strong> <span id="det-paciente-nome">Maria Oliveira</span></p>
+            <p><strong>CNS:</strong> <span id="det-paciente-cns">123456789012345</span></p>
+            <p><strong>Idade:</strong> <span id="det-paciente-idade">58 anos</span></p>
+            <p><strong>UBS:</strong> <span id="det-paciente-ubs">UBS Central</span></p>
+          </div>
+          <div class="grupo-info">
+            <h3>Dados da Solicitação</h3>
+            <p><strong>Tipo:</strong> <span id="det-tipo">Ressonância Magnética</span></p>
+            <p><strong>Data:</strong> <span id="det-data">10/05/2023</span></p>
+            <p><strong>Solicitante:</strong> <span id="det-solicitante">Dr. Silva</span></p>
+            <p><strong>Prioridade:</strong> <span id="det-prioridade" class="tag-urgente">Urgente</span></p>
+          </div>
+        </div>
+        
+        <div class="detalhes-clinicos">
+          <h3>Informações Clínicas</h3>
+          <p><strong>CID:</strong> <span id="det-cid">I20.9</span></p>
+          <p><strong>Justificativa:</strong></p>
+          <div id="det-justificativa" class="justificativa-box">
+            Paciente com histórico de dor torácica à esquerda, com irradiação para MSE, associado a dispneia e sudorese. ECG mostra inversão de onda T em parede anterior. Necessita de ressonância cardíaca com urgência para avaliar perfusão miocárdica e possível isquemia. Paciente já fez uso de nitrato com melhora parcial dos sintomas.
+          </div>
+          <p><strong>Histórico:</strong></p>
+          <div id="det-historico" class="historico-lista">
+            <div class="historico-item">
+              <span class="hist-data">02/04/2023</span>
+              <span class="hist-descricao">Consulta Clínico Geral - HAS + DM2</span>
+            </div>
+            <div class="historico-item">
+              <span class="hist-data">15/04/2023</span>
+              <span class="hist-descricao">Exame Laboratório - Colesterol elevado</span>
+            </div>
+            <div class="historico-item">
+              <span class="hist-data">05/05/2023</span>
+              <span class="hist-descricao">Atendimento Urgência - Dor torácica</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="acoes-detalhes">
+          <div class="grupo-acoes">
+            <h3>Decisão</h3>
+            <button class="btn-grande aprovar" id="btn-aprovar-solicitacao">Aprovar Solicitação</button>
+            <button class="btn-grande devolver" id="btn-devolver-solicitacao">Devolver para Ajustes</button>
+            <button class="btn-grande negar" id="btn-negar-solicitacao">Negar Solicitação</button>
+            
+            <!-- Novas ações -->
+            <button class="btn-grande agendar" id="btn-agendar-solicitacao">Agendar Atendimento</button>
+            <button class="btn-grande cancelar" id="btn-cancelar-solicitacao">Cancelar Solicitação</button>
+            <button class="btn-grande concluir" id="btn-concluir-solicitacao">Marcar como Concluída</button>
+            
+            <div class="repriorizar-container">
+              <h4>Repriorizar:</h4>
+              <div class="select-grupo">
+                <select id="nova-prioridade">
+                  <option value="urgente">Urgente</option>
+                  <option value="alta">Alta</option>
+                  <option value="media">Média</option>
+                  <option value="baixa">Baixa</option>
+                </select>
+                <button class="btn-acao repriorizar" id="btn-repriorizar-solicitacao">Atualizar</button>
+              </div>
+            </div>
+          </div>
+          <div class="grupo-acoes">
+            <h3>Observações</h3>
+            <textarea id="observacoes-regulador" placeholder="Adicione observações à decisão..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="sistema-central-regulacao.js"></script>
+</body>
+</html> 
